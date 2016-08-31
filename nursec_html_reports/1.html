@@ -1,0 +1,525 @@
+<style type="text/css">
+
+	td
+	  {
+		  padding:0px;
+		  font-size:10.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Arial;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	.colheader
+	{
+		font-weight:700;
+		color:#101010;
+		border:1px solid #CFCFCF;
+		padding:4px;
+	}
+	.data
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #CFCFCF;
+		padding:4px;
+	}
+	.center
+	{
+		text-align:center;
+	}
+	.datablockTitle
+	{
+		font-size:16pt;
+		font-weight:700;
+		color:#121212;
+		padding:4px;
+	}
+	.datablockDescription
+	{
+		font-size:9pt;
+		font-weight:400;
+		color:#121212;
+		padding:8px;
+	}
+	.ReferenceCaption
+	{
+		font-weight:700;
+		color:#101010;
+		font-size:10pt;
+		text-align:left;
+		padding:10px;
+	}
+	.rounded
+	{
+		border-top-left-radius: 4px 4px;
+		border-bottom-left-radius: 4px 4px;
+		border-top-right-radius: 4px 4px;
+		border-bottom-right-radius: 4px 4px;
+	}
+	#figure1 svg {
+		height: 500px;
+		width: 1000px;
+		margin: 10px;
+		min-width: 100px;
+		min-height: 100px;
+	/*
+	  Minimum height and width is a good idea to prevent negative SVG dimensions...
+	  For example width should be =< margin.left + margin.right + 1,
+	  of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+	*/
+	}
+	#figure2 svg {
+		height: 500px;
+		width: 1000px;
+		margin: 10px;
+		min-width: 100px;
+		min-height: 100px;
+	}
+	#figure3 svg {
+		height: 500px;
+		width: 1000px;
+		margin: 10px;
+		min-width: 100px;
+		min-height: 100px;
+	}
+	#figure4 svg {
+		height: 500px;
+		width: 1000px;
+		margin: 10px;
+		min-width: 100px;
+		min-height: 100px;
+	}
+	#figure5 svg {
+		height: 500px;
+		width: 1000px;
+		margin: 10px;
+		min-width: 100px;
+		min-height: 100px;
+	}
+	#figure6 svg {
+		height: 500px;
+		width: 1000px;
+		margin: 10px;
+		min-width: 100px;
+		min-height: 100px;
+	}
+</style>
+
+<script type="text/javascript">
+
+var orgUnit = dhis2.report.organisationUnit;
+var orgUnitHierarchy = dhis2.report.organisationUnitHierarchy;
+var orgUnitChildren = dhis2.report.organisationUnitChildren;
+var period = dhis2.report.periods;
+
+var varJSON;
+var outVals = '';
+var outCumul = '';
+var outCumulOrg = '';
+var CumulOrgCount = 0;
+var outJSON;
+
+var tbl1Col3 = 0;
+var tbl1Col4 = 0;
+
+var today = new Date();
+var nownow = today.getFullYear() + "_" + (today.getMonth() +1) + "_" + today.getDate() + "_" + today.getHours() + "_" + today.getMinutes() + "_" + today.getSeconds();
+var dd = today.getDate()-1;
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear();
+
+console.log('nownow: ' + nownow);
+console.log('today: ' + today);
+
+$(document).ready(
+
+	function() {
+
+	if(dd<10) {
+		dd='0'+dd
+		if (dd == '00'){
+			dd = '01';
+		}
+	} 
+
+	if(mm<10) {
+		mm='0'+mm
+	} 
+
+	today = mm+'/'+dd+'/'+yyyy;
+	//console.log(today);
+
+	//$( "#ORGUNIT_NAME" ).html(orgUnit.name);
+
+	//var NCregOpt = '../api/sqlViews/Sdp2IOCdEvb/data.json';
+	var NCregOpt = '../api/analytics.json?dimension=dx:CSv1k6HyWaX;bpowKfFev4E;FQQpzvBZ6qu;K7q7Mpa0oz0;HuVrIqeOlLd;DIf0PNyGVNi;JvPMMZjkoW8;zut8YiGvmPf;pgwfamgyb7P;WD4MjCssPR8;LCTtbyxKUHN;oQ3a5qYkk8E;dz3a6n0JIKn&dimension=pe:LAST_5_YEARS&filter=ou:JLA7wl59oN3&displayProperty=NAME';
+
+	$.getJSON( NCregOpt, function( json ) {
+			if ( json.height > 0 ) {
+				$( "#table1row1col3" ).html('<a style="font-size:9pt;color:#000000;font-family: Arial;" href="generateHtmlReport.action?uid=uvWn8YmYJQd">' + formatNumber(ReturnSumReg(json)) + '</a>'); // TOTAL  REGISTRATIONS
+				$( "#table1row1_1col3" ).html(formatNumber(ReturnLookupSum(json,'bpowKfFev4E'))); // NAT  REGISTRATIONS
+				$( "#table1row1_2col3" ).html(formatNumber(ReturnLookupSum(json,'FQQpzvBZ6qu'))); // PROV REGISTRATIONS
+				$( "#table1row1_3col3" ).html(formatNumber(ReturnLookupSum(json,'K7q7Mpa0oz0'))); // FAC  REGISTRATIONS
+				$( "#table1row2col3" ).html(formatNumber(ReturnLookupSum(json,'HuVrIqeOlLd'))); // NC OPT OUT: TOTAL
+				//$( "#table1row2_1col3" ).html(formatNumber(ReturnLookupSum(json,'DIf0PNyGVNi'))); // NC OPT OUT: Baby Loss
+				//$( "#table1row2_2col3" ).html(formatNumber(ReturnLookupSum(json,'JvPMMZjkoW8'))); // NC OPT OUT: Job Changed
+				//$( "#table1row3_3col3" ).html(formatNumber(ReturnLookupSum(json,'zut8YiGvmPf'))); // NC OPT OUT: Miscarriage
+				//$( "#table1row4_3col3" ).html(formatNumber(ReturnLookupSum(json,'pgwfamgyb7P'))); // NC OPT OUT: Not Useful
+				//$( "#table1row5_3col3" ).html(formatNumber(ReturnLookupSum(json,'WD4MjCssPR8'))); // NC OPT OUT: Number Changed
+				//$( "#table1row6_3col3" ).html(formatNumber(ReturnLookupSum(json,'LCTtbyxKUHN'))); // NC OPT OUT: Stillborn
+				//$( "#table1row7_3col3" ).html(formatNumber(ReturnLookupSum(json,'oQ3a5qYkk8E'))); // NC OPT OUT: Unknown
+				//$( "#table1row8_3col3" ).html(formatNumber(ReturnLookupSum(json,'dz3a6n0JIKn'))); // NC OPT OUT: Other
+			}
+		} );
+
+	document.all("loadingmessage").innerHTML = '';
+	document.all("ReportResults").style.display = 'block';
+
+}); //document ready function
+
+function ReturnLookupSum(theData,dx){
+
+	var i;
+	var iReturn = 0;
+
+	for(i = 0; i < theData.rows.length; i++) {
+		if (theData.rows[i][0] == dx){
+			iReturn += parseFloat(theData.rows[i][2]);
+		}
+	}
+
+	return iReturn;
+}
+
+function ReturnSumReg(theData){
+
+	var i;
+	var iReturn = 0;
+
+	for(i = 0; i < theData.rows.length; i++) {
+		if (theData.rows[i][0] == 'bpowKfFev4E'){
+			iReturn += parseFloat(theData.rows[i][2]);
+		}
+		if (theData.rows[i][0] == 'FQQpzvBZ6qu'){
+			iReturn += parseFloat(theData.rows[i][2]);
+		}
+		if (theData.rows[i][0] == 'K7q7Mpa0oz0'){
+			iReturn += parseFloat(theData.rows[i][2]);
+		}
+	}
+
+	return iReturn;
+}
+
+function ReturnCumulativeTotal(myData,iCol){
+
+	var i;
+	var iLastTot;
+
+	iLastTot = 0;
+
+	for(i = 0; i < myData.rows.length; i++) {
+		if (myData.rows[i][iCol] != ''){
+			iLastTot += Number(myData.rows[i][iCol]);
+		}
+	}
+
+	return iLastTot;
+
+}
+
+function ReturnHTMLwithPercentageShare(myData){
+
+	var i;
+	var p;
+	var iGrandTot;
+	var sReturn;
+
+	iGrandTot = 0;
+	
+	for(i = 0; i < myData.rows.length; i++) {
+		iGrandTot += Number(myData.rows[i][myData.headers.length-1]);
+	}	
+
+	sReturn = '<table class="listTable gridTable"><thead>';
+	for(i = 0; i < myData.headers.length; i++) {
+		sReturn += '<th style="background-Color:#F5F5F5;">' + myData.headers[i].name + '</th>'
+	}
+	sReturn += '<th style="background-Color:#F5F5F5;">%</th></thead><tbody>';
+
+	for(i = 0; i < myData.rows.length; i++) {
+		sReturn += '<tr>';
+		for(p = 0; p < myData.headers.length; p++) {
+			sReturn += '<td>' + myData.rows[i][p] + '</td>';
+		}
+		sReturn += '<td>' + parseFloat(Number(myData.rows[i][myData.headers.length-1]) * 100 / Number(iGrandTot)).toFixed(2) + '%</td></tr>';
+
+	}
+
+	sReturn += '</tbody></table>';
+	return sReturn;
+}
+
+
+ function loadCumulOrgUnitJSON(myData){
+
+	var newDate = "";
+	var i;
+	var iLastTot;
+	var MaxDate = '1994-01-01';
+
+	iLastTot = 0;
+
+	for(i = 0; i < myData.rows.length; i++) {
+
+		if (new Date(myData.rows[i][0]) > new Date(MaxDate))
+		{
+			MaxDate = myData.rows[i][0];
+		}
+
+		iLastTot = Number(iLastTot) + Number(myData.rows[i][1]);
+
+	}
+
+	CumulOrgCount = Number(iLastTot);
+
+	//$( "#MAX_TRACKER_ENTRY1" ).html(MaxDate);
+
+}
+
+ function LoadMaxEventDate(myData,iCol){
+
+	var newDate = "";
+	var i;
+	var iLastTot;
+	var MaxDate = formatDate('1994-01-01');
+	var today = new Date();
+
+	iLastTot = 0;
+
+	for(i = 0; i < myData.rows.length; i++) {
+		
+		if (myData.rows[i][iCol] != ''){
+
+			if (formatDate(myData.rows[i][iCol]) > formatDate(MaxDate)){
+				if (formatDate(myData.rows[i][iCol]) < formatDate(today)){
+					MaxDate = formatDate(myData.rows[i][iCol]);
+				}
+			}
+		
+		}
+
+	}
+
+	//console.log(MaxDate);
+
+	//$( "#MAX_TRACKER_ENTRY1" ).html(new Date(MaxDate));
+	$( "#MAX_TRACKER_ENTRY1" ).html(MaxDate);
+
+}
+function formatDate(dtm)
+{
+	var dd;
+	var newDate = new Date(dtm);
+
+	//console.log(newDate);
+	dd = newDate.getDate();
+
+	var mm;
+	mm	= newDate.getMonth()+1; //January is 0!
+
+	var yyyy;
+	yyyy = newDate.getFullYear();
+
+	if(dd<10) {
+		dd='0'+dd
+	} 
+	if(mm<10) {
+		mm='0'+mm
+	} 
+
+    return (yyyy+'-'+mm+'-'+dd);
+}
+
+
+function formatNumber(num)
+{
+    return ("" + num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, function($1) { return $1 + "," });
+}
+
+</script>
+
+<div style='position:absolute;left:600px;top:65px;border:1px solid #0061E9;background-Color:#EBF3FF;width:225px;padding:4px;text-align:center;display:none;' class='rounded'>
+	<!-- <a href='../api/sqlViews/blVRaoJDeI2/data.csv'>Download Registration Pivot Data</a><br> -->
+</div>
+<div id='loadingmessage' name='loadingmessage' style=''>
+<span id='loading' name='loading' style='width:98%;height:98%;text-align:center;'>
+<div style='color:#999999;font-family:arial;font-weight:700;font-size:11pt;width:25%;border:1px solid #F5F5F5;padding:4px;vertical-align:middle;' class='rounded'><Img Src='../images/ajax-loader-circle.gif'>&nbsp;&nbsp;PREPARING REPORT DATA</div>
+</span>
+</div>
+
+
+
+<table style='width:900px;height:100%;display:none;' id='ReportResults' name='ReportResults'>
+
+ <tr>
+  <td style='width:28px;' rowspan=500>&nbsp;</td>
+  <td id='logoArea' name='logoArea' style='text-align:left;'>
+	<img src='http://www.jembi.org/wp-content/uploads/2014/08/Logo.png' style='height:55px;'>
+  </td>
+  <td style='width:28px;' rowspan=500>&nbsp;</td>
+ </tr>
+
+ <tr>
+  <td id='ReportTitle' name='ReportTitle' style='font-size:20pt;font-weight:700;color:#121212;text-align:center;' colspan=3>
+	NurseConnect Cumulative Overview <!-- <br>Data Up until <strong><span id='MAX_TRACKER_ENTRY1' name='MAX_TRACKER_ENTRY1'>Midnight Last Night</span></strong>-->
+  </td>
+ </tr>
+
+ <tr>
+  <td style='color:#CFCFCF;font-size:8pt;height:10px;' colspan=3>
+	&nbsp;
+  </td>
+ </tr>
+
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+ 
+ <tr>
+  <td style='color:#CFCFCF;font-size:8pt;height:10px;' colspan=3>
+	&nbsp;
+  </td>
+ </tr>
+ 
+ <tr>
+  <td id='DataBlock1Title' name='DataBlock1Title' class='datablockTitle' style='font-size:16pt;' colspan=3>
+	1. Total Registrations and Opt Outs
+  </td>
+ </tr>
+ <tr>
+  <td id='DataBlock1Description' name='DataBlock1Description' class='datablockDescription' colspan=3>
+	The cumulative transaction totals counted as at <span id='MAX_TRACKER_ENTRY2' name='MAX_TRACKER_ENTRY2'></span>, are shown in Table One, below:
+  </td>
+ </tr>
+
+ <tr>
+  <td id='DataBlock1Content' name='DataBlock1Content' style='' colspan=3>
+ 
+ 	<table id='table1' name='table1' style='border:1px solid #CFCFCF;width:780px;' cellspacing=0>
+		<tr>
+			<td id='table1heading1' name='table1heading1' class='colheader center' style='width:40px;'>#</td>
+			<td id='table1heading2' name='table1heading2' class='colheader center'>Transaction Type</td>
+			<td id='table1heading3' name='table1heading3' class='colheader center' style='width:80px;'>Total</td>
+		</tr>
+		<tr>
+			<td id='table1row1col1' name='table1row1col1' class='data center' style='width:25px;'>1</td>
+			<td id='table1row1col2' name='table1row1col2' class='data'>
+				Total Registrations
+			</td>
+			<td id='table1row1col3' name='table1row1col3' class='data center'>&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row1_1col1' name='table1row1_1col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>1.1</td>
+			<td id='table1row1_1col2' name='table1row1_1col2' class='data' style="font-size:8pt;">
+				 National
+			</td>
+			<td id='table1row1_1col3' name='table1row1_1col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row1_2col1' name='table1row1_2col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>1.2</td>
+			<td id='table1row1_2col2' name='table1row1_2col2' class='data' style="font-size:8pt;">
+				 Province
+			</td>
+			<td id='table1row1_2col3' name='table1row1_2col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row1_3col1' name='table1row1_3col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>1.3</td>
+			<td id='table1row1_3col2' name='table1row1_3col2' class='data' style="font-size:8pt;">
+				 Facility
+			</td>
+			<td id='table1row1_3col3' name='table1row1_3col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row2col1' name='table1row3col1' class='data center'>2</td>
+			<td id='table1row2col2' name='table1row3col2' class='data'>
+				Total Number of Opt-outs
+			</td>
+			<td id='table1row2col3' name='table1row3col3' class='data center'>&nbsp;</td>
+		</tr>
+<!--		<tr>
+			<td id='table1row2_1col1' name='table1row2_1col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.1</td>
+			<td id='table1row2_1col2' name='table1row2_1col2' class='data' style="font-size:8pt;">
+				 Baby Loss
+			</td>
+			<td id='table1row2_1col3' name='table1row2_1col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row2_2col1' name='table1row2_2col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.2</td>
+			<td id='table1row2_2col2' name='table1row2_2col2' class='data' style="font-size:8pt;">
+				 Job Change
+			</td>
+			<td id='table1row2_2col3' name='table1row2_2col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row3_3col1' name='table1row3_3col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.3</td>
+			<td id='table1row3_3col2' name='table1row3_3col2' class='data' style="font-size:8pt;">
+				 Miscarriage
+			</td>
+			<td id='table1row3_3col3' name='table1row3_3col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row4_3col1' name='table1row4_3col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.4</td>
+			<td id='table1row4_3col2' name='table1row4_3col2' class='data' style="font-size:8pt;">
+				 Not Useful
+			</td>
+			<td id='table1row4_3col3' name='table1row4_3col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		
+		<tr>
+			<td id='table1row5_1col1' name='table1row5_1col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.5</td>
+			<td id='table1row5_1col2' name='table1row5_1col2' class='data' style="font-size:8pt;">
+				 Number Changed
+			</td>
+			<td id='table1row5_1col3' name='table1row5_1col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row6_2col1' name='table1row6_2col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.6</td>
+			<td id='table1row6_2col2' name='table1row6_2col2' class='data' style="font-size:8pt;">
+				 Stillborn
+			</td>
+			<td id='table1row6_2col3' name='table1row6_2col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td id='table1row7_3col1' name='table1row7_3col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.7</td>
+			<td id='table1row7_3col2' name='table1row7_3col2' class='data' style="font-size:8pt;">
+				 Unknown
+			</td>
+			<td id='table1row7_3col3' name='table1row7_3col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td id='table1row8_3col1' name='table1row8_3col1' class='data center' style='width:25px;font-size:8pt;text-align:right;'>2.8</td>
+			<td id='table1row8_3col2' name='table1row8_3col2' class='data' style="font-size:8pt;">
+				 Other
+			</td>
+			<td id='table1row8_3col3' name='table1row8_3col3' class='data center' style="font-size:8pt;">&nbsp;</td>
+		</tr> -->
+	</table>
+
+ 
+  </td>
+ </tr>
+ <tr>
+  <td id='DataBlock1Summary' name='DataBlock1Summary' class='ReferenceCaption' style='' colspan=3>Table 1. Cumulative Totals of Registrations and Opt-outs</td>
+ </tr>
+
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+ 
+
+ <tr>
+  <td style='height:50%;' colspan=3>&nbsp;</td>
+ </tr>
+
+</table>

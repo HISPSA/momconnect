@@ -114,7 +114,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 60 AND "REG".executiondate < CURRENT_DATE AND 
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) < 1
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -131,7 +131,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 90 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) >= 1 AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) < 2  
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -149,7 +149,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 120 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) >= 2 AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) < 3  
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -167,7 +167,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 150 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) >= 3
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -183,7 +183,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 60 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) < 1
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -200,7 +200,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 90 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) >= 1 AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) < 2
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -218,7 +218,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 120 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) >= 2 AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) < 3
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -236,7 +236,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 150 AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) >= 3
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -432,19 +432,19 @@ UPDATE _momc_tally "A" SET found = 1 FROM datavalue "B" WHERE "A".dataelementid 
 /* Update datavalue from temp where values are different */
 UPDATE datavalue "A" SET value = "B".value FROM _momc_tally "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "A".sourceid = "B".organisationunitid AND "B".Found <> 0 AND "A".value <> "B".value;
 
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total {fYear} (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'AWXQsENsfoV';
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'eDktBD88IUL';
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit before 20 weeks (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'rIF2YyXrsER';
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit 20 weeks or later (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'rvVE6HN25Vc';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total TARGET{fYear} (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'AWXQsENsfoV';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total TARGET (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'eDktBD88IUL';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit before 20 weeks TARGET (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'rIF2YyXrsER';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit 20 weeks or later TARGET (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'rvVE6HN25Vc';
 
 /* Append New data values */
 INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
 SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total {fYear} (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'AWXQsENsfoV';
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'eDktBD88IUL';
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit before 20 weeks (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'rIF2YyXrsER';
-insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit 20 weeks or later (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'rvVE6HN25Vc';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total TARGET{fYear} (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'AWXQsENsfoV';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total TARGET (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'eDktBD88IUL';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit before 20 weeks TARGET (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'rIF2YyXrsER';
+insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit 20 weeks or later TARGET (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'rvVE6HN25Vc';
 
 
 
@@ -1877,6 +1877,427 @@ SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".valu
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Helpdesk: COMPLIMENTS (new)', Count(*) from  _momc_tally where found = 0 AND uid1 = 'iL600oV2Aom';
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Helpdesk: COMPLAINTS (new)', Count(*) from  _momc_tally where found = 0 AND uid1 = 'VGy28K3ts9N';
+
+truncate table _momc_tally;
+
+/* NC SCRIPT 1: REGISTRATION + OPTOUT  */
+
+/* ALL Registrations */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT ouid, 'CSv1k6HyWaX', 9508715, to_char(execdate, 'yyyymmdd'), COUNT(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+	select psi.executiondate as execdate, psi.organisationunitid as ouid, reg.value from (
+	SELECT 
+	  MIN(programstageinstance.programstageinstanceid) as psi_id, 
+	  trackedentityattributevalue.value
+	FROM 
+	  public.programstageinstance, 
+	  public.trackedentityattributevalue, 
+	  public.programinstance
+	WHERE 
+	  trackedentityattributevalue.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+	  programinstance.programinstanceid = programstageinstance.programinstanceid AND
+	  programstageinstance.programstageid = 8916947 AND 
+	  trackedentityattributevalue.trackedentityattributeid = 8916869
+	GROUP BY trackedentityattributevalue.value
+	) as reg, programstageinstance psi 
+	WHERE reg.psi_id = psi.programstageinstanceid 
+	AND psi.executiondate >= '2016-01-01'  AND psi.executiondate < CURRENT_DATE 
+) as good
+GROUP BY ouid, to_char(execdate, 'yyyymmdd');
+
+/* NC REGISTRATIONS (Nat,Prov,Fac)  */
+/* NAT Registrations */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT ouid, 'bpowKfFev4E', 9972511, to_char(execdate, 'yyyymmdd'), COUNT(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+	select psi.executiondate as execdate, psi.organisationunitid as ouid, reg.value from (
+	SELECT 
+	  MIN(programstageinstance.programstageinstanceid) as psi_id, 
+	  trackedentityattributevalue.value
+	FROM 
+	  public.programstageinstance, 
+	  public.trackedentityattributevalue, 
+	  public.programinstance
+	WHERE 
+	  trackedentityattributevalue.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+	  programinstance.programinstanceid = programstageinstance.programinstanceid AND
+	  programstageinstance.programstageid = 8916947 AND 
+	  trackedentityattributevalue.trackedentityattributeid = 8916869
+	GROUP BY trackedentityattributevalue.value
+	) as reg, programstageinstance psi, _orgunitstructure ou
+	WHERE reg.psi_id = psi.programstageinstanceid 
+	AND psi.organisationunitid = ou.organisationunitid AND ou.idlevel1 IS NOT NULL AND ou.idlevel2 IS NULL
+	AND psi.executiondate >= '2016-01-01'  AND psi.executiondate < CURRENT_DATE 
+) as good
+GROUP BY ouid, to_char(execdate, 'yyyymmdd');
+
+/* PROV Registrations */
+INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT ouid, 'FQQpzvBZ6qu', 9972515, to_char(execdate, 'yyyymmdd'), COUNT(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+
+	select psi.executiondate as execdate, psi.organisationunitid as ouid, reg.value from (
+	SELECT 
+	  MIN(programstageinstance.programstageinstanceid) as psi_id, 
+	  trackedentityattributevalue.value
+	FROM 
+	  public.programstageinstance, 
+	  public.trackedentityattributevalue, 
+	  public.programinstance
+	WHERE 
+	  trackedentityattributevalue.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+	  programinstance.programinstanceid = programstageinstance.programinstanceid AND
+	  programstageinstance.programstageid = 8916947 AND 
+	  trackedentityattributevalue.trackedentityattributeid = 8916869
+	GROUP BY trackedentityattributevalue.value
+	) as reg, programstageinstance psi, _orgunitstructure ou
+	WHERE reg.psi_id = psi.programstageinstanceid 
+	AND psi.organisationunitid = ou.organisationunitid AND ou.idlevel2 IS NOT NULL AND ou.idlevel3 IS NULL
+	AND psi.executiondate >= '2016-01-01'  AND psi.executiondate < CURRENT_DATE 
+	UNION
+	select psi.executiondate as execdate, ou.idlevel2 as ouid, reg.value from (
+	SELECT 
+	  MIN(programstageinstance.programstageinstanceid) as psi_id, 
+	  trackedentityattributevalue.value
+	FROM 
+	  public.programstageinstance, 
+	  public.trackedentityattributevalue, 
+	  public.programinstance
+	WHERE 
+	  trackedentityattributevalue.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+	  programinstance.programinstanceid = programstageinstance.programinstanceid AND
+	  programstageinstance.programstageid = 8916947 AND 
+	  trackedentityattributevalue.trackedentityattributeid = 8916869
+	GROUP BY trackedentityattributevalue.value
+	) as reg, programstageinstance psi, _orgunitstructure ou
+	WHERE reg.psi_id = psi.programstageinstanceid 
+	AND psi.organisationunitid = ou.organisationunitid AND ou.idlevel3 IS NOT NULL AND ou.idlevel4 IS NULL
+	AND psi.executiondate >= '2016-01-01'  AND psi.executiondate < CURRENT_DATE 
+	UNION
+	select psi.executiondate as execdate, ou.idlevel2 as ouid, reg.value from (
+	SELECT 
+	  MIN(programstageinstance.programstageinstanceid) as psi_id, 
+	  trackedentityattributevalue.value
+	FROM 
+	  public.programstageinstance, 
+	  public.trackedentityattributevalue, 
+	  public.programinstance
+	WHERE 
+	  trackedentityattributevalue.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+	  programinstance.programinstanceid = programstageinstance.programinstanceid AND
+	  programstageinstance.programstageid = 8916947 AND 
+	  trackedentityattributevalue.trackedentityattributeid = 8916869
+	GROUP BY trackedentityattributevalue.value
+	) as reg, programstageinstance psi, _orgunitstructure ou
+	WHERE reg.psi_id = psi.programstageinstanceid 
+	AND psi.organisationunitid = ou.organisationunitid AND ou.idlevel4 IS NOT NULL AND ou.idlevel5 IS NULL
+	AND psi.executiondate >= '2016-01-01'  AND psi.executiondate < CURRENT_DATE
+) as gii 
+GROUP BY ouid, to_char(execdate, 'yyyymmdd');
+
+/* FAC Registrations */
+INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT ouid, 'K7q7Mpa0oz0', 9972527, to_char(execdate, 'yyyymmdd'), COUNT(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+	select psi.executiondate as execdate, psi.organisationunitid as ouid, reg.value from (
+	SELECT 
+	  MIN(programstageinstance.programstageinstanceid) as psi_id, 
+	  trackedentityattributevalue.value
+	FROM 
+	  public.programstageinstance, 
+	  public.trackedentityattributevalue, 
+	  public.programinstance
+	WHERE 
+	  trackedentityattributevalue.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+	  programinstance.programinstanceid = programstageinstance.programinstanceid AND
+	  programstageinstance.programstageid = 8916947 AND 
+	  trackedentityattributevalue.trackedentityattributeid = 8916869
+	GROUP BY trackedentityattributevalue.value
+	) as reg, programstageinstance psi, _orgunitstructure ou
+	WHERE reg.psi_id = psi.programstageinstanceid 
+	AND psi.organisationunitid = ou.organisationunitid AND ou.idlevel5 IS NOT NULL 
+	AND psi.executiondate >= '2016-01-01'  AND psi.executiondate < CURRENT_DATE 
+) as good
+GROUP BY ouid, to_char(execdate, 'yyyymmdd');
+
+
+UPDATE _momc_tally "A" SET Found = 0;
+UPDATE _momc_tally "A" SET periodid = "B".periodid FROM  period "B" WHERE "A".period = to_char("B".startdate, 'yyyymmdd') AND "B".periodtypeid = 1;
+UPDATE _momc_tally "A" SET found = 1 FROM datavalue "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "B".sourceid = "A".organisationunitid;
+
+/* Update datavalue from temp where values are different */
+UPDATE datavalue "A" SET value = "B".value FROM _momc_tally "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "A".sourceid = "B".organisationunitid AND "B".Found <> 0 AND "A".value <> "B".value;
+
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations ALL (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9508715;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations NAT (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9972511;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations PROV (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9972515;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations FAC (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9972527;
+
+/* Append New data values */
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations ALL (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9508715;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations NAT (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9972511;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations PROV (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9972515;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations FAC (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9972527;
+
+
+truncate table _momc_tally;
+
+
+/* Load ProgramStage ("NC OPT OUT") per OrgUnit per Day */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'HuVrIqeOlLd', 9508734, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentityattributevalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentityattributevalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentityattributevalue.trackedentityinstanceid = trackedentityinstance.trackedentityinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentityattributevalue.trackedentityattributeid = 8916869 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+
+UPDATE _momc_tally "A" SET Found = 0;
+UPDATE _momc_tally "A" SET periodid = "B".periodid FROM  period "B" WHERE "A".period = to_char("B".startdate, 'yyyymmdd') AND "B".periodtypeid = 1;
+
+UPDATE _momc_tally "A" SET found = 1 FROM datavalue "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "B".sourceid = "A".organisationunitid;
+UPDATE datavalue "A" SET value = "B".value FROM _momc_tally "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "A".sourceid = "B".organisationunitid AND "B".Found <> 0 AND "A".value <> "B".value;
+
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOuts (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9508734;
+
+/* Append New data values */
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOuts (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9508734;
+
+truncate table _momc_tally;
+
+/* NC SCRIPT: OPT-OUT Reason: Baby Loss */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'DIf0PNyGVNi', 10018255, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '3' OR trackedentitydatavalue.value = 'Baby Loss')  
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Job Change */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'JvPMMZjkoW8', 10018273, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '7' OR trackedentitydatavalue.value = 'Job Change') 
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Miscarriage */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'zut8YiGvmPf', 10018252, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '1' OR trackedentitydatavalue.value = 'Miscarriage') 
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Not Useful */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'pgwfamgyb7P', 10018258, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '4' OR trackedentitydatavalue.value = 'Not Useful')  
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Number Change */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'WD4MjCssPR8', 10018276, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '8' OR trackedentitydatavalue.value = 'Number Change') 
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Other */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'dz3a6n0JIKn', 10018260, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '5' OR trackedentitydatavalue.value = 'Other') 
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Stillborn */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'LCTtbyxKUHN', 10018253, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '2' OR trackedentitydatavalue.value = 'Stillborn') 
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+/* NC SCRIPT: OPT-OUT Reason: Unknown */
+ INSERT INTO _momc_tally (organisationunitid,uid1,dataelementid,period,value,storedby,created)
+ SELECT organisationunitid, 'oQ3a5qYkk8E', 10018271, to_char(executiondate, 'yyyymmdd'), Count(value), 'aggregated_from_NurseScript',CURRENT_DATE FROM (
+SELECT 
+  programstageinstance.organisationunitid, 
+  programstageinstance.executiondate, 
+  trackedentitydatavalue.value
+FROM 
+  public.programstageinstance, 
+  public.trackedentityinstance, 
+  public.trackedentitydatavalue, 
+  public.programinstance
+WHERE 
+  programstageinstance.programinstanceid = programinstance.programinstanceid AND
+  trackedentityinstance.trackedentityinstanceid = programinstance.trackedentityinstanceid AND
+  trackedentitydatavalue.programstageinstanceid = programstageinstance.programstageinstanceid AND
+  programstageinstance.programstageid = 8916951 AND 
+  trackedentitydatavalue.dataelementid = 8917233 AND
+  programstageinstance.executiondate >= CURRENT_DATE - days AND
+  (trackedentitydatavalue.value = '6' OR trackedentitydatavalue.value = 'Unknown')  
+) as good
+GROUP BY organisationunitid, to_char(executiondate, 'yyyymmdd');
+
+
+
+UPDATE _momc_tally "A" SET Found = 0;
+UPDATE _momc_tally "A" SET periodid = "B".periodid FROM  period "B" WHERE "A".period = to_char("B".startdate, 'yyyymmdd') AND "B".periodtypeid = 1;
+UPDATE _momc_tally "A" SET found = 1 FROM datavalue "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "B".sourceid = "A".organisationunitid;
+
+/* Update datavalue from temp where values are different */
+UPDATE datavalue "A" SET value = "B".value FROM _momc_tally "B" WHERE "A".dataelementid = "B".dataelementid AND "A".periodid = "B".periodid AND "A".sourceid = "B".organisationunitid AND "B".Found <> 0 AND "A".value <> "B".value;
+
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Baby Loss (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9972511;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Job Change (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018273;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Miscarriage (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018252;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Not Useful (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018258;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Number Change (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018276;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Other (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018260;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Stillborn (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018253;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Unknown (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 10018271;
+
+
+/* Append New data values */
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Baby Loss (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9972511;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Job Change (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018273;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Miscarriage (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018252;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Not Useful (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018258;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Number Change (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018276;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Other (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018260;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Stillborn (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018253;
+insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Unknown (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018271;
+
 
 select datetime, operation, rowcount from _momc_log order by operation;
 ; $BODY$
