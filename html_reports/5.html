@@ -1,0 +1,1156 @@
+<style type="text/css">
+
+	td
+	  {
+		  padding:2px;
+		  font-size:10.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Arial;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	a, span
+	 {
+		  padding:4px;
+		  font-size:9.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Tahoma,Verdana,Arial;
+		  font-size: 8pt;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	th.oucolheader
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:9pt;
+		border:2px solid #000000;
+		vertical-align:bottom;
+		text-align:left;
+	}
+	.colheader
+	{
+		font-weight:700;
+		color:#101010;
+		border:1px solid #CFCFCF;
+		padding:4px;
+	}
+	th.mycolheader
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:9pt;
+		border:2px solid #000000;
+		text-align:center;
+	}
+	th.mycolheadersmall
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:8pt;
+		border:2px solid #000000;
+		text-align:center;
+	}
+	td.subtotal
+	{
+		background-Color: #D4D4D4;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:left;
+	}
+	td.subtotalyellow
+	{
+		background-Color: #F4FF5C;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:left;
+	}
+	td.numericsubtotal
+	{
+		background-Color: #D4D4D4;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.numericsubtotalyellow
+	{
+		background-Color: #F4FF5C;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.data
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+	}
+	td.numericdata
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.numericdatabold
+	{
+		font-weight:700;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+
+	td.numericdataperc
+	{
+		font-weight:400;
+		font-size:8pt;
+		font-style: italic;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.numericdatapercbold
+	{
+		font-weight:700;
+		font-size:8pt;
+		font-style: italic;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.border
+	{
+		border:1px solid #000000;
+		padding:2px;
+	}
+	.center
+	{
+		text-align:center;
+	}
+	.datablockTitle
+	{
+		font-size:16pt;
+		font-weight:700;
+		color:#121212;
+		padding:4px;
+	}
+	.datablockDescription
+	{
+		font-size:9pt;
+		font-weight:400;
+		color:#121212;
+		padding:8px;
+	}
+	.ReferenceCaption
+	{
+		font-weight:700;
+		color:#101010;
+		font-size:10pt;
+		text-align:left;
+		padding:10px;
+	}
+	.rounded
+	{
+		border-top-left-radius: 4px 4px;
+		border-bottom-left-radius: 4px 4px;
+		border-top-right-radius: 4px 4px;
+		border-bottom-right-radius: 4px 4px;
+	}
+</style>
+
+
+<script type="text/javascript">
+
+var orgUnit = dhis2.report.organisationUnit;
+var orgUnitHierarchy = dhis2.report.organisationUnitHierarchy;
+var orgUnitChildren = dhis2.report.organisationUnitChildren;
+var period = dhis2.report.periods;
+var repuid = getParameterByName('uid');
+
+var varJSON;
+var outVals = '';
+var outCumul = '';
+var outCumulOrg = '';
+var CumulOrgCount = 0;
+var outJSON;
+var qPe = getParameterByName('pe');
+var qPEname = getParameterByName('pename');
+var qPEcolName = getParameterByName('pecol');
+var qAllNoSR = getParameterByName('show');
+
+var today = new Date();
+
+var dd = today.getDate()-1;
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear()+1;
+
+$(document).ready(
+
+	function() {
+	
+	var DtmNow;
+	
+	DtmNow = new Date().getTime();
+
+	//$( "#ORGUNIT_NAME" ).html(orgUnit.name);
+
+	var sJdata = '../api/sqlViews/SLqd6Bm1s0G/data.json?criteria=uidlevel' + orgUnitHierarchy.length + ':' + orgUnit.id + '&uniqueparm=' + DtmNow;
+	
+	//console.log(sJdata);
+
+	$.ajax({
+		url: sJdata,
+		success: function (data) {
+			CreateOrgHierarchyAndResults(data,'#DataBlock1Content');
+		}
+	});
+
+	if (qPEname != ''){
+		$( "#TITLE_DATE_RANGE" ).html('<strong style="font-size:14pt;">MomConnect Service Ratings ' + qPEname + '</strong>');
+	}
+	else{
+		$( "#TITLE_DATE_RANGE" ).html('<strong style="font-size:14pt;">MomConnect Service Ratings September 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear() + '</strong>');
+	}
+
+}); //document ready function
+
+function CreateOrgHierarchyAndResults(myData,sDestination){
+
+	var i;
+	var p;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var OU3LastParent = '';
+	var OU3LastParentName = '';
+	var OU4LastParent = '';
+	var OU4LastParentName = '';
+
+	var CL_VU;
+	var CL_NS;
+	var CL_S;
+	var CL_VS;
+	var CL_tot;
+
+	var FR_VU;
+	var FR_NS;
+	var FR_S;
+	var FR_VS;
+	var FR_tot;
+
+	var PR_VU;
+	var PR_NS;
+	var PR_S;
+	var PR_VS;
+	var PR_tot;
+
+	var WF_VU;
+	var WF_NS;
+	var WF_S;
+	var WF_VS;
+	var WF_tot;
+
+	var WL_VU;
+	var WL_NS;
+	var WL_S;
+	var WL_VS;
+	var WL_tot;
+	
+	var varSR;
+	var varRegVis;
+	var iRegT;
+	var iAntVis;
+	var iSRtot;
+	
+	var iVU;
+	var iNS;
+	var iS;
+	var iVS;
+	var yyyymm = ''
+	var qPE;
+	var qPEcol;
+	var sColSummary;
+	
+	qPE = getParameterByName('pe');
+	
+	//console.log('pe=' + qPE);
+
+	if (qPE != ''){
+		yyyymm = qPE;
+		sColSummary = ' ' + qPEname;
+		qPEcol = ' ' + qPEcolName;
+	}
+	else{
+		for(p = 2014; p < yyyy; p++) {
+
+			if (p == 2014){
+				for(i = 9; i < 13; i++) {
+					yyyymm += p;
+					if(i<10) {
+						yyyymm +='0'+i + ';';
+					}
+					else{
+						yyyymm +=i + ';';
+					}
+				}
+			}
+			else{
+				if (p == (yyyy-1)){
+					for(i = 1; i < mm; i++) {
+						yyyymm += p;
+						if(i<10) {
+							yyyymm +='0'+i + ';';
+						}
+						else{
+							yyyymm +=i + ';';
+						}
+					}
+				}
+				else{
+					for(i = 1; i < 13; i++) {
+						yyyymm += p;
+						if(i<10) {
+							yyyymm +='0'+i + ';';
+						}
+						else{
+							yyyymm +=i + ';';
+						}
+					}
+				}
+			}
+		}
+
+		sColSummary = 'Sep 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear();
+		qPEcol = 'for Sep 2013 to ' + ReturnPreviousMonthName() + ' ' + (yyyy-2);
+	}
+
+
+	sReturn += '<table class="listTable gridTable"><thead><tr>';
+
+	sReturn += '<th class=oucolheader rowspan=3>Region</th>';
+
+	sReturn += '<th class=mycolheader rowspan=3>' + 'DHIS First Visits<br>' + qPEcol + '</th>';
+	sReturn += '<th class=mycolheader rowspan=3>' + 'MomConnect Registrations</th>';
+	sReturn += '<th class=mycolheader rowspan=3>' + 'Service Rating Responses </th>';
+	sReturn += '<th class=mycolheader rowspan=3>' + 'Rating Response Rate </th>';
+
+	sReturn += '<th class=mycolheader colspan=8>' + 'Cleanliness</th>';
+	sReturn += '<th class=mycolheader colspan=8>' + 'Friendliness</th>';
+	sReturn += '<th class=mycolheader colspan=8>' + 'Privacy</th>';
+	sReturn += '<th class=mycolheader colspan=16>' + 'Waiting Times Feel</th>';
+	sReturn += '</tr>';
+	
+	//Cleanliness
+	sReturn += '<tr>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very unsatisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>CL_VU%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'not satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>CL_NS%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>CL_S%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>CL_VS%</i></th>';
+
+	//Friendliness
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very unsatisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>FR_VU%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'not satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>FR_NS%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>FR_S%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>FR_VS%</i></th>';
+
+	//Privacy
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very unsatisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>PR_VU%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'not satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>PR_NS%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>PR_S%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>PR_VS%</i></th>';
+
+	//Waiting Time (group)
+	sReturn += '<th class=mycolheader colspan=8>' + 'Feel</th>';
+	sReturn += '<th class=mycolheader colspan=8>' + 'Length</th>';
+	sReturn += '</tr>';
+
+
+	//WT: Feel
+	sReturn += '<tr>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very unsatisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WF_VU%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'not satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WF_NS%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WF_S%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'very satisfied</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WF_VS%</i></th>';
+
+	//WT: Length
+	sReturn += '<th class=mycolheader rowspan=2>' + 'All Day</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WT_AD%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'More Than 4 Hours</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WT_4+%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'Between 1 And 4 Hours</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WT_1_4%</i></th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'Less Than an Hour</th>';
+	sReturn += '<th class=mycolheadersmall rowspan=2><i>WT<1%</i></th>';
+	sReturn += '</tr>';
+
+	sReturn += '</thead>';
+	sReturn += '<tbody>';
+
+	varSR = '../api/analytics.json?dimension=dx:pqkO6bKUlsA;fT0Ij6NxsqF;A8YBjNIFEki;LUHydToTpMY;VVPm3ADvUUK&dimension=ou:LEVEL-2;LEVEL-3;LEVEL-4;LEVEL-5;' + orgUnit.id + '&dimension=co&filter=pe:' + yyyymm + '&hierarchyMeta=false&displayProperty=SHORTNAME';
+
+	var SrJSON = $.ajax({url:varSR, async: false}).responseText; 
+
+	varRegVis = '../api/analytics.json?dimension=dx:EMHm9Q75Og1;lPVvmrINVHS&dimension=ou:LEVEL-2;LEVEL-3;LEVEL-4;LEVEL-5;' + orgUnit.id + '&dimension=co&filter=pe:' + yyyymm + '&hierarchyMeta=false&displayProperty=SHORTNAME';
+
+	var RegVisJSON = $.ajax({url:varRegVis, async: false}).responseText; 
+
+	for(i = 0; i < myData.rows.length; i++) {
+
+		/* OU2 LEVEL */
+		if (i == 0){
+
+			iAntVis = ReturnLookup(JSON.parse(RegVisJSON),'EMHm9Q75Og1',orgUnit.id)
+			iRegT = ReturnLookup(JSON.parse(RegVisJSON),'lPVvmrINVHS',orgUnit.id);
+
+			CL_VU = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','bJgRAv5eq1V',orgUnit.id);
+			CL_NS =ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','CoA02pu8PkM',orgUnit.id);
+			CL_S = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','Ecracj6he2P',orgUnit.id);
+			CL_VS = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','xHefH1AsGA4',orgUnit.id);
+
+			FR_VU = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','bJgRAv5eq1V',orgUnit.id);
+			FR_NS =ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','CoA02pu8PkM',orgUnit.id);
+			FR_S = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','Ecracj6he2P',orgUnit.id);
+			FR_VS = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','xHefH1AsGA4',orgUnit.id);
+
+			PR_VU = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','bJgRAv5eq1V',orgUnit.id);
+			PR_NS =ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','CoA02pu8PkM',orgUnit.id);
+			PR_S = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','Ecracj6he2P',orgUnit.id);
+			PR_VS = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','xHefH1AsGA4',orgUnit.id);
+
+			WF_VU = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','bJgRAv5eq1V',orgUnit.id);
+			WF_NS =ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','CoA02pu8PkM',orgUnit.id);
+			WF_S = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','Ecracj6he2P',orgUnit.id);
+			WF_VS = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','xHefH1AsGA4',orgUnit.id);
+
+			WL_VU = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','bJgRAv5eq1V',orgUnit.id);
+			WL_NS =ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','CoA02pu8PkM',orgUnit.id);
+			WL_S = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','Ecracj6he2P',orgUnit.id);
+			WL_VS = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','xHefH1AsGA4',orgUnit.id);
+
+			CL_tot = parseFloat((parseFloat(CL_VU.replace('',0)) + parseFloat(CL_NS.replace('',0)) + parseFloat(CL_S.replace('',0)) + parseFloat(CL_VS.replace('',0))));
+			FR_tot = parseFloat((parseFloat(FR_VU.replace('',0)) + parseFloat(FR_NS.replace('',0)) + parseFloat(FR_S.replace('',0)) + parseFloat(FR_VS.replace('',0))));
+			PR_tot = parseFloat((parseFloat(PR_VU.replace('',0)) + parseFloat(PR_NS.replace('',0)) + parseFloat(PR_S.replace('',0)) + parseFloat(PR_VS.replace('',0))));
+			WF_tot = parseFloat((parseFloat(WF_VU.replace('',0)) + parseFloat(WF_NS.replace('',0)) + parseFloat(WF_S.replace('',0)) + parseFloat(WF_VS.replace('',0))));
+			WL_tot = parseFloat((parseFloat(WL_VU.replace('',0)) + parseFloat(WL_NS.replace('',0)) + parseFloat(WL_S.replace('',0)) + parseFloat(WL_VS.replace('',0))));
+
+			var SRarr = new Array(CL_tot,FR_tot,PR_tot,WF_tot,WL_tot);
+			SRarr.reverse();
+			iSRtot = SRarr[0];
+
+			sReturn += '<tr oulevel="2" SR="' + iSRtot + '" style="background-Color:#ffffff;">';
+			sReturn += '<td nowrap class=numericdatabold style="text-align:left;">&nbsp;' + orgUnit.name + '</td>';
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iAntVis) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iAntVis) + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iRegT) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iRegT) + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iSRtot) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iSRtot) + '</td>';
+			if (iSRtot > 0 && iRegT > 0){
+				sReturn += '<td class=numericdatabold style="">' + parseFloat(parseFloat(iSRtot)/parseFloat(iRegT)*100).toFixed(1) + '</td>';
+			}
+			else{
+				sReturn += '<td class=numericdatabold style="color:#ffffff;">' + parseFloat(0).toFixed(1) + '</td>';
+			}
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VU)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_NS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_S)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VU)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_NS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_S)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VU)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_NS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_S)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VU)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_NS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_S)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VU)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_NS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_S)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '</tr>';
+
+		}
+
+		/* OU3 LEVEL */
+		if (OU3LastParent != myData.rows[i][9])
+		{
+			OU3LastParent = myData.rows[i][9];
+
+			iAntVis = ReturnLookup(JSON.parse(RegVisJSON),'EMHm9Q75Og1',myData.rows[i][9])
+			iRegT = ReturnLookup(JSON.parse(RegVisJSON),'lPVvmrINVHS',myData.rows[i][9]);
+
+			CL_VU = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','bJgRAv5eq1V',myData.rows[i][9]);
+			CL_NS =ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','CoA02pu8PkM',myData.rows[i][9]);
+			CL_S = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','Ecracj6he2P',myData.rows[i][9]);
+			CL_VS = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','xHefH1AsGA4',myData.rows[i][9]);
+
+			FR_VU = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','bJgRAv5eq1V',myData.rows[i][9]);
+			FR_NS =ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','CoA02pu8PkM',myData.rows[i][9]);
+			FR_S = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','Ecracj6he2P',myData.rows[i][9]);
+			FR_VS = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','xHefH1AsGA4',myData.rows[i][9]);
+
+			PR_VU = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','bJgRAv5eq1V',myData.rows[i][9]);
+			PR_NS =ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','CoA02pu8PkM',myData.rows[i][9]);
+			PR_S = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','Ecracj6he2P',myData.rows[i][9]);
+			PR_VS = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','xHefH1AsGA4',myData.rows[i][9]);
+
+			WF_VU = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','bJgRAv5eq1V',myData.rows[i][9]);
+			WF_NS =ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','CoA02pu8PkM',myData.rows[i][9]);
+			WF_S = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','Ecracj6he2P',myData.rows[i][9]);
+			WF_VS = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','xHefH1AsGA4',myData.rows[i][9]);
+
+			WL_VU = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','bJgRAv5eq1V',myData.rows[i][9]);
+			WL_NS =ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','CoA02pu8PkM',myData.rows[i][9]);
+			WL_S = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','Ecracj6he2P',myData.rows[i][9]);
+			WL_VS = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','xHefH1AsGA4',myData.rows[i][9]);
+
+			CL_tot = parseFloat((parseFloat(CL_VU.replace('',0)) + parseFloat(CL_NS.replace('',0)) + parseFloat(CL_S.replace('',0)) + parseFloat(CL_VS.replace('',0))));
+			FR_tot = parseFloat((parseFloat(FR_VU.replace('',0)) + parseFloat(FR_NS.replace('',0)) + parseFloat(FR_S.replace('',0)) + parseFloat(FR_VS.replace('',0))));
+			PR_tot = parseFloat((parseFloat(PR_VU.replace('',0)) + parseFloat(PR_NS.replace('',0)) + parseFloat(PR_S.replace('',0)) + parseFloat(PR_VS.replace('',0))));
+			WF_tot = parseFloat((parseFloat(WF_VU.replace('',0)) + parseFloat(WF_NS.replace('',0)) + parseFloat(WF_S.replace('',0)) + parseFloat(WF_VS.replace('',0))));
+			WL_tot = parseFloat((parseFloat(WL_VU.replace('',0)) + parseFloat(WL_NS.replace('',0)) + parseFloat(WL_S.replace('',0)) + parseFloat(WL_VS.replace('',0))));
+
+			var SRarr = new Array(CL_tot,FR_tot,PR_tot,WF_tot,WL_tot);
+			SRarr.reverse();
+			iSRtot = SRarr[0];
+
+			sReturn += '<tr oulevel="3"  SR="' + iSRtot + '" style="background-Color:#ffffff;">';
+			sReturn += '<td nowrap class=numericdatabold style="text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + myData.rows[i][10] + '</td>';
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iAntVis) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iAntVis) + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iRegT) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iRegT) + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iSRtot) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iSRtot) + '</td>';
+			if (iSRtot > 0 && iRegT > 0){
+				sReturn += '<td class=numericdatabold style="">' + parseFloat(parseFloat(iSRtot)/parseFloat(iRegT)*100).toFixed(1) + '</td>';
+			}
+			else{
+				sReturn += '<td class=numericdatabold style="color:#ffffff;">' + parseFloat(0).toFixed(1) + '</td>';
+			}
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VU)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_NS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_S)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VU)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_NS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_S)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VU)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_NS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_S)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VU)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_NS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_S)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VU)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_NS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_S)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '</tr>';
+		}
+
+		/* OU4 LEVEL */
+		if (OU4LastParent != myData.rows[i][13])
+		{
+			OU4LastParent = myData.rows[i][13];
+
+			iAntVis = ReturnLookup(JSON.parse(RegVisJSON),'EMHm9Q75Og1',myData.rows[i][13])
+			iRegT = ReturnLookup(JSON.parse(RegVisJSON),'lPVvmrINVHS',myData.rows[i][13]);
+
+			CL_VU = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','bJgRAv5eq1V',myData.rows[i][13]);
+			CL_NS =ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','CoA02pu8PkM',myData.rows[i][13]);
+			CL_S = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','Ecracj6he2P',myData.rows[i][13]);
+			CL_VS = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','xHefH1AsGA4',myData.rows[i][13]);
+
+			FR_VU = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','bJgRAv5eq1V',myData.rows[i][13]);
+			FR_NS =ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','CoA02pu8PkM',myData.rows[i][13]);
+			FR_S = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','Ecracj6he2P',myData.rows[i][13]);
+			FR_VS = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','xHefH1AsGA4',myData.rows[i][13]);
+
+			PR_VU = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','bJgRAv5eq1V',myData.rows[i][13]);
+			PR_NS =ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','CoA02pu8PkM',myData.rows[i][13]);
+			PR_S = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','Ecracj6he2P',myData.rows[i][13]);
+			PR_VS = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','xHefH1AsGA4',myData.rows[i][13]);
+
+			WF_VU = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','bJgRAv5eq1V',myData.rows[i][13]);
+			WF_NS =ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','CoA02pu8PkM',myData.rows[i][13]);
+			WF_S = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','Ecracj6he2P',myData.rows[i][13]);
+			WF_VS = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','xHefH1AsGA4',myData.rows[i][13]);
+
+			WL_VU = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','bJgRAv5eq1V',myData.rows[i][13]);
+			WL_NS =ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','CoA02pu8PkM',myData.rows[i][13]);
+			WL_S = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','Ecracj6he2P',myData.rows[i][13]);
+			WL_VS = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','xHefH1AsGA4',myData.rows[i][13]);
+
+			CL_tot = parseFloat((parseFloat(CL_VU.replace('',0)) + parseFloat(CL_NS.replace('',0)) + parseFloat(CL_S.replace('',0)) + parseFloat(CL_VS.replace('',0))));
+			FR_tot = parseFloat((parseFloat(FR_VU.replace('',0)) + parseFloat(FR_NS.replace('',0)) + parseFloat(FR_S.replace('',0)) + parseFloat(FR_VS.replace('',0))));
+			PR_tot = parseFloat((parseFloat(PR_VU.replace('',0)) + parseFloat(PR_NS.replace('',0)) + parseFloat(PR_S.replace('',0)) + parseFloat(PR_VS.replace('',0))));
+			WF_tot = parseFloat((parseFloat(WF_VU.replace('',0)) + parseFloat(WF_NS.replace('',0)) + parseFloat(WF_S.replace('',0)) + parseFloat(WF_VS.replace('',0))));
+			WL_tot = parseFloat((parseFloat(WL_VU.replace('',0)) + parseFloat(WL_NS.replace('',0)) + parseFloat(WL_S.replace('',0)) + parseFloat(WL_VS.replace('',0))));
+
+			var SRarr = new Array(CL_tot,FR_tot,PR_tot,WF_tot,WL_tot);
+			SRarr.reverse();
+			iSRtot = SRarr[0];
+
+			sReturn += '<tr oulevel="4"  SR="' + iSRtot + '" style="background-Color:#ffffff;">';
+			sReturn += '<td nowrap class=numericdatabold style="text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + myData.rows[i][14] + '</td>';
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iAntVis) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iAntVis) + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iRegT) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iRegT) + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(iSRtot) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iSRtot) + '</td>';
+			if (iSRtot > 0 && iRegT > 0){
+				sReturn += '<td class=numericdatabold style="">' + parseFloat(parseFloat(iSRtot)/parseFloat(iRegT)*100).toFixed(1) + '</td>';
+			}
+			else{
+				sReturn += '<td class=numericdatabold style="color:#ffffff;">' + parseFloat(0).toFixed(1) + '</td>';
+			}
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VU)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_NS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_S)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VU)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_NS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_S)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VU)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_NS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_S)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VU)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_NS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_S)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VU) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VU)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_NS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_NS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_S) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_S)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdatabold style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VS) + '</td>';
+			sReturn += '<td class=numericdatapercbold style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '</tr>';
+		}
+
+		/* OU5 LEVEL */
+		iAntVis = ReturnLookup(JSON.parse(RegVisJSON),'EMHm9Q75Og1',myData.rows[i][17])
+		iRegT = ReturnLookup(JSON.parse(RegVisJSON),'lPVvmrINVHS',myData.rows[i][17]);
+
+		if (parseFloat((parseFloat(iAntVis.replace('',0)) + parseFloat(iRegT.replace('',0)))) >0){
+
+			CL_VU = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','bJgRAv5eq1V',myData.rows[i][17]);
+			CL_NS =ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','CoA02pu8PkM',myData.rows[i][17]);
+			CL_S = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','Ecracj6he2P',myData.rows[i][17]);
+			CL_VS = ReturnLookupValue(JSON.parse(SrJSON),'pqkO6bKUlsA','xHefH1AsGA4',myData.rows[i][17]);
+
+			FR_VU = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','bJgRAv5eq1V',myData.rows[i][17]);
+			FR_NS =ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','CoA02pu8PkM',myData.rows[i][17]);
+			FR_S = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','Ecracj6he2P',myData.rows[i][17]);
+			FR_VS = ReturnLookupValue(JSON.parse(SrJSON),'fT0Ij6NxsqF','xHefH1AsGA4',myData.rows[i][17]);
+
+			PR_VU = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','bJgRAv5eq1V',myData.rows[i][17]);
+			PR_NS =ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','CoA02pu8PkM',myData.rows[i][17]);
+			PR_S = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','Ecracj6he2P',myData.rows[i][17]);
+			PR_VS = ReturnLookupValue(JSON.parse(SrJSON),'A8YBjNIFEki','xHefH1AsGA4',myData.rows[i][17]);
+
+			WF_VU = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','bJgRAv5eq1V',myData.rows[i][17]);
+			WF_NS =ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','CoA02pu8PkM',myData.rows[i][17]);
+			WF_S = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','Ecracj6he2P',myData.rows[i][17]);
+			WF_VS = ReturnLookupValue(JSON.parse(SrJSON),'LUHydToTpMY','xHefH1AsGA4',myData.rows[i][17]);
+
+			WL_VU = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','bJgRAv5eq1V',myData.rows[i][17]);
+			WL_NS =ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','CoA02pu8PkM',myData.rows[i][17]);
+			WL_S = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','Ecracj6he2P',myData.rows[i][17]);
+			WL_VS = ReturnLookupValue(JSON.parse(SrJSON),'VVPm3ADvUUK','xHefH1AsGA4',myData.rows[i][17]);
+
+			CL_tot = parseFloat((parseFloat(CL_VU.replace('',0)) + parseFloat(CL_NS.replace('',0)) + parseFloat(CL_S.replace('',0)) + parseFloat(CL_VS.replace('',0))));
+			FR_tot = parseFloat((parseFloat(FR_VU.replace('',0)) + parseFloat(FR_NS.replace('',0)) + parseFloat(FR_S.replace('',0)) + parseFloat(FR_VS.replace('',0))));
+			PR_tot = parseFloat((parseFloat(PR_VU.replace('',0)) + parseFloat(PR_NS.replace('',0)) + parseFloat(PR_S.replace('',0)) + parseFloat(PR_VS.replace('',0))));
+			WF_tot = parseFloat((parseFloat(WF_VU.replace('',0)) + parseFloat(WF_NS.replace('',0)) + parseFloat(WF_S.replace('',0)) + parseFloat(WF_VS.replace('',0))));
+			WL_tot = parseFloat((parseFloat(WL_VU.replace('',0)) + parseFloat(WL_NS.replace('',0)) + parseFloat(WL_S.replace('',0)) + parseFloat(WL_VS.replace('',0))));
+
+			var SRarr = new Array(CL_tot,FR_tot,PR_tot,WF_tot,WL_tot);
+			SRarr.reverse();
+			iSRtot = SRarr[0];
+
+			sReturn += '<tr oulevel="5" SR="' + iSRtot + '" style="display:table-row;">';
+			sReturn += '<td nowrap class=data style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + myData.rows[i][18] + '</td>';
+
+			sReturn += '<td class=numericdata style="' + (Math.round(iAntVis) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iAntVis) + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(iRegT) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iRegT) + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(iSRtot) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(iSRtot) + '</td>';
+			if (iSRtot > 0 && iRegT > 0){
+				sReturn += '<td class=numericdata style="">' + parseFloat(parseFloat(iSRtot)/parseFloat(iRegT)*100).toFixed(1) + '</td>';
+			}
+			else{
+				sReturn += '<td class=numericdata style="color:#ffffff;">' + parseFloat(0).toFixed(1) + '</td>';
+			}
+
+			sReturn += '<td class=numericdata style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VU) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(CL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VU)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_NS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(CL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_NS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_S) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(CL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_S)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(CL_VS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(CL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CL_VS)/parseFloat(CL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdata style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VU) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(FR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VU)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_NS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(FR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_NS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_S) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(FR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_S)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(FR_VS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(FR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(FR_VS)/parseFloat(FR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+
+			sReturn += '<td class=numericdata style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VU) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(PR_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VU)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_NS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(PR_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_NS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_S) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(PR_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_S)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(PR_VS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(PR_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(PR_VS)/parseFloat(PR_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		
+			sReturn += '<td class=numericdata style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VU) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WF_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VU)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_NS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WF_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_NS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_S) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WF_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_S)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WF_VS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WF_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WF_VS)/parseFloat(WF_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '<td class=numericdata style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VU) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WL_VU) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VU)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_NS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WL_NS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_NS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_S) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WL_S) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_S)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+			sReturn += '<td class=numericdata style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + Math.round(WL_VS) + '</td>';
+			sReturn += '<td class=numericdataperc style="' + (Math.round(WL_VS) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(WL_VS)/parseFloat(WL_tot)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+
+			sReturn += '</tr>';
+
+		}
+		
+	}
+
+	sReturn += '</tbody></table>';
+
+	document.all("loadingmessage").innerHTML = '';
+	document.all("ReportResults").style.display = 'block';
+
+	$(sDestination).html(sReturn);
+}
+
+function LoadHTMLresultsTable(myData,sDestination){
+
+	var i;
+	var p;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var iNum = 0;
+	var iDen = 0;
+	var sLastOU;
+
+	sReturn += '<table class="listTable gridTable"><thead><tr>';
+
+	for(i = 0; i < myData.headers.length; i++) {
+		sReturn += '<th>' + myData.headers[i].name + '</th>';
+	}
+
+	sReturn += '</tr></tr></thead>';
+	sReturn += '<tbody>';
+
+	for(i = 0; i < myData.rows.length; i++) {
+		sReturn += '<tr>';
+		for(p = 0; p < myData.headers.length; p++) {
+			sReturn += '<td>' + myData.rows[i][p] + '</td>';
+		}
+		sReturn += '</tr>';
+	}
+
+	sReturn += '</tbody></table>';
+
+	$(sDestination).html(sReturn);
+}
+
+function formatNumber(num)
+{
+    return ("" + num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, function($1) { return $1 + " " });
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function ReturnLookup(theData,dx,ou){
+
+	var i;
+	var sReturn = '';
+
+	for(i = 0; i < theData.rows.length; i++) {
+	
+		if (theData.rows[i][0] == dx)
+		{
+			if (theData.rows[i][1] == ou)
+			{
+				sReturn = theData.rows[i][3];
+			}
+		}
+
+	}
+
+	return sReturn;
+}
+function ReturnLookupValue(theData,dx,co,ou){
+
+	var i;
+	var sReturn = '';
+
+	for(i = 0; i < theData.rows.length; i++) {
+	
+		if (theData.rows[i][0] == dx)
+		{
+			if (theData.rows[i][1] == ou)
+			{
+				if (theData.rows[i][2] == co)
+				{
+					sReturn = theData.rows[i][3];
+				}
+			}
+		}
+
+	}
+
+	return sReturn;
+}
+
+function ReturnPreviousMonthName(){
+	var d = new Date();
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+	  "July", "August", "September", "October", "November", "December"];
+	return monthNames[d.getMonth()-1];
+}
+function ReturnPreviousMonthYear(){
+	var y = new Date();
+	if (y.getMonth() == 12){
+		return y.getFullYear()-1;
+	}
+	else{
+		return y.getFullYear();
+	}
+}
+
+function ReturnMonthAbbr(iMonth){
+	var d = new Date();
+	var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	return monthShortNames[iMonth];
+}
+</script>
+
+<div id='loadingmessage' name='loadingmessage' style=''>
+<span id='loading' name='loading' style='width:98%;height:98%;text-align:center;'>
+<div style='color:#999999;font-family:arial;font-weight:700;font-size:11pt;width:25%;border:1px solid #F5F5F5;padding:4px;vertical-align:middle;' class='rounded'><Img Src='../images/ajax-loader-circle.gif'>&nbsp;&nbsp;PREPARING REPORT DATA</div>
+</span>
+</div>
+
+<table style='width:900px;height:100%;display:none;' id='ReportResults' name='ReportResults'>
+
+ <tr>
+  <td style='width:75px;' rowspan=500>&nbsp;</td>
+  <td id='logoArea' name='logoArea' style='text-align:left;font-size:12pt;font-weight:700;vertical-align:middle;border:1px solid #E6E6E6;padding:5px;width:100%;' class='rounded'>
+	<img src='http://www.jembi.org/wp-content/uploads/2014/08/Logo.png' style='height:55px;position:relative:left:-10px;top:-5px;'><br>
+	<span id='TITLE_DATE_RANGE' name='TITLE_DATE_RANGE' style='position:relative:left:-10px;top:-25px;'></span>
+  </td>
+ </tr>
+
+ <tr>
+  <td id='' name='' class='datablockTitle' style='font-size:8pt;text-align:left;' colspan=2>
+ 
+	<table style='width:100%;background-Color:#ffffff;border:1px solid #E6E6E6' class='rounded'>
+
+<script language='javascript'>
+
+/*
+function NavigateMyPage(sURL){
+	var URL;
+	URL = sURL;
+	if (document.getElementById("pagefilter").value == '0'){
+		URL = URL + 'show=0';
+	}
+	else{
+		URL = URL + 'show=1';
+	}
+	window.location = sURL;
+}
+
+	var yyyymm = ''
+	var yy;
+	
+	if (qAllNoSR == ''){
+		qAllNoSR = 0;
+	}
+*/
+
+	document.write ('<tr>');
+	document.write ('<td colspan=2><a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '" style="color:#0066FF;">Show All</a>&nbsp;</td>');
+	document.write ('<td colspan=10>&nbsp;</td>');
+	document.write ('</tr>');
+
+	for(p = 2014; p < yyyy; p++) {
+		document.write ('<tr><td>');
+
+		yy = p.toString();
+		yy = yy.substr(2,2);
+
+		if (p == 2014){
+			document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + p + '&pename=Aug-14 to Dec-14&pecol=Aug-13 to Dec-13" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+			for(i = 0; i < 12; i++) {
+				yyyymm = p;
+				if(i<9) {
+					yyyymm +='0'+(i+1);
+				}
+				else{
+					yyyymm = yyyymm.toString() + (i+1);
+				}
+				if (i<7){
+					document.write ('<td>');
+					document.write ('<span style="color:#C0C0C0;">' + ReturnMonthAbbr(i) + '-' + yy + '</span></td>');
+					document.write ('</td>');
+				}
+				else{
+					document.write ('<td>');
+					document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+					document.write ('</td>');
+				}
+			}
+			document.write ('</tr>');
+		}
+		else{
+			if (p == (yyyy-1)){
+				document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + p + '&pename=Jan-' + yy + ' to ' + ReturnMonthAbbr(mm-1) + '-' + yy + '*&pecol=Jan-' + (yy-1) + ' to ' + ReturnMonthAbbr(mm-1) + '-' + (yy-1) + '" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+				for(i = 0; i < 12; i++) {
+					yyyymm = p;
+					if(i<9) {
+						yyyymm +='0'+(i+1);
+					}
+					else{
+						yyyymm = yyyymm.toString() + (i+1);
+					}
+					if (i>=mm){
+						document.write ('<td>');
+						document.write ('<span style="color:#C0C0C0;">' + ReturnMonthAbbr(i) + '-' + yy + '</span></td>');
+						document.write ('</td>');
+					}
+					else{
+						if (i == (mm-1)){
+							document.write ('<td>');
+							document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '*&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#66A3FF;">' + ReturnMonthAbbr(i) + '-' + yy + '*</a></td>');
+							document.write ('</td>');
+						}
+						else{
+							document.write ('<td>');
+							document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+							document.write ('</td>');
+						}
+					}
+				}
+			}
+			else{
+				document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + p + '&pename=Jan-' + yy + ' to Dec-' + yy + '&pecol=Jan-' + (yy-1) + ' to Dec-' + (yy-1) + '" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+				for(i = 0; i < 12; i++) {
+					yyyymm = p;
+					if(i<9) {
+						yyyymm +='0'+(i+1);
+					}
+					else{
+						yyyymm = yyyymm.toString() + (i+1);
+					}
+
+					document.write ('<td>');
+					document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+					document.write ('</td>');
+
+				}
+			}
+		}
+
+	}
+	
+	function ShowHideZeroServiceRatings(thisObj){
+	
+		var TRs = document.body.getElementsByTagName("tr");
+		for (var i=0, max=TRs.length; i < max; i++) {
+			if (TRs[i].getAttribute("oulevel") == "5"){
+				if (TRs[i].getAttribute("SR") == "0"){
+					if (thisObj.getAttribute("clicked") == "false"){
+						TRs[i].style.display = "none";
+					}
+					else{
+						TRs[i].style.display="table-row";
+					}
+				}
+			}
+		}
+
+		if (thisObj.getAttribute("clicked") == "false"){
+			thisObj.setAttribute("clicked","true");
+		}
+		else{
+			thisObj.setAttribute("clicked","false");
+		}
+
+	}
+
+</script>
+	</table>
+
+
+  </td>
+ </tr>
+ 
+ <tr>
+	<td colspan=2 style="font-size:8pt;">
+		<input type=button value="Show/Hide ZERO Service Ratings" onclick="javascript:ShowHideZeroServiceRatings(this);" title="***CAUTION: This does not recalculate [Rating Response Rate] or totals for Registrations and Antenatal 1st Visits***" clicked="false" style="color:#0066FF;" class="button">&nbsp;</td>
+	<td colspan=10>&nbsp;</td>
+ </tr>
+
+ <tr>
+  <td id='DataBlock1Content' name='DataBlock1Content' style='' colspan=2>
+ 
+  </td>
+ </tr>
+
+
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+ 
+ <tr>
+  <td style='color:#CFCFCF;font-size:8pt;height:10px;' colspan=2>
+	&nbsp;
+  </td>
+ </tr>
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+
+
+</table>

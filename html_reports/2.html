@@ -1,0 +1,726 @@
+<style type="text/css">
+
+	td
+	  {
+		  padding:2px;
+		  font-size:10.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Arial;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	a, span
+	 {
+		  padding:4px;
+		  font-size:9.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Tahoma,Verdana,Arial;
+		  font-size: 8pt;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	th.oucolheader
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:9pt;
+		border:2px solid #000000;
+		vertical-align:bottom;
+		text-align:left;
+	}
+	.colheader
+	{
+		font-weight:700;
+		color:#101010;
+		border:1px solid #CFCFCF;
+		padding:4px;
+	}
+	th.mycolheader
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:9pt;
+		border:2px solid #000000;
+		text-align:center;
+	}
+	td.subtotal
+	{
+		background-Color: #D4D4D4;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:left;
+	}
+	td.subtotalyellow
+	{
+		background-Color: #F4FF5C;	
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:left;
+	}
+	td.numericsubtotal
+	{
+		background-Color: #D4D4D4;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.numericsubtotalyellow
+	{
+		background-Color: #F4FF5C;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.data
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+	}
+	td.numericdata
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.border
+	{
+		border:1px solid #000000;
+		padding:2px;
+	}
+	.center
+	{
+		text-align:center;
+	}
+	.datablockTitle
+	{
+		font-size:16pt;
+		font-weight:700;
+		color:#121212;
+		padding:4px;
+	}
+	.datablockDescription
+	{
+		font-size:9pt;
+		font-weight:400;
+		color:#121212;
+		padding:8px;
+	}
+	.ReferenceCaption
+	{
+		font-weight:700;
+		color:#101010;
+		font-size:10pt;
+		text-align:left;
+		padding:10px;
+	}
+	.rounded
+	{
+		border-top-left-radius: 4px 4px;
+		border-bottom-left-radius: 4px 4px;
+		border-top-right-radius: 4px 4px;
+		border-bottom-right-radius: 4px 4px;
+	}
+</style>
+
+
+<script type="text/javascript">
+
+var orgUnit = dhis2.report.organisationUnit;
+var orgUnitHierarchy = dhis2.report.organisationUnitHierarchy;
+var orgUnitChildren = dhis2.report.organisationUnitChildren;
+var period = dhis2.report.periods;
+var repuid = getParameterByName('uid');
+
+var varJSON;
+var outVals = '';
+var outCumul = '';
+var outCumulOrg = '';
+var CumulOrgCount = 0;
+var outJSON;
+var qPEname = getParameterByName('pename');
+var qPEcolName = getParameterByName('pecol');
+
+var today = new Date();
+
+var dd = today.getDate()-1;
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear()+1;
+
+$(document).ready(
+
+	function() {
+
+	//$( "#ORGUNIT_NAME" ).html(orgUnit.name);
+
+	//var sJdata = '../api/sqlViews/uc09dlQXec3/data.json?criteria=uidlevel' + orgUnitHierarchy.length + ':' + orgUnit.id;
+	var sJdata = '../api/sqlViews/uc09dlQXec3/data.json'; //?criteria=uidlevel' + orgUnitHierarchy.length + ':' + orgUnit.id;
+
+	$.ajax({
+		url: sJdata,
+		success: function (data) {
+			CreateOrgHierarchyAndResults(data,'#DataBlock1Content');
+		}
+	});
+
+	if (qPEname != ''){
+		$( "#TITLE_DATE_RANGE" ).html('<strong style="font-size:14pt;">MomConnect Registration versus Targets ' + qPEname + '</strong>');
+	}
+	else{
+		$( "#TITLE_DATE_RANGE" ).html('<strong style="font-size:14pt;">MomConnect Registration versus Targets September 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear() + '</strong>');
+	}
+
+}); //document ready function
+
+function CreateOrgHierarchyAndResults(myData,sDestination){
+
+	var i;
+	var p;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var iNum = 0;
+	var iDen = 0;
+	var OU2LastParent = '';
+	var OU2LastParentName = '';
+	var OU3LastParent = '';
+	var OU3LastParentName = '';
+	var varMyURL;
+	
+	var col1;
+	var col2;
+	var col3;
+	var col4;
+	var sStyleColor;
+
+	var OU2Col1Tot;
+	var OU2Col2Tot;
+	var OU2Col3Tot;
+	var OU2Col4Tot;
+	var OU3Col1Tot;
+	var OU3Col2Tot;
+	var OU3Col3Tot;
+	var OU3Col4Tot;
+	var Col1GrandTot = 0;
+	var Col2GrandTot = 0;
+	var Col3GrandTot = 0;
+	var Col4GrandTot = 0;
+	var dblPerc;
+	var Col1PlaceholderGrandTot = 0;
+	var yyyymm = ''
+	var qPE;
+	var qPEcol;
+	var sColSummary;
+	
+	qPE = getParameterByName('pe');
+	
+	//console.log('pe=' + qPE);
+
+	if (qPE != ''){
+		yyyymm = qPE;
+		sColSummary = 'for ' + qPEname;
+		qPEcol = 'for ' + qPEcolName;
+	}
+	else{
+		for(p = 2014; p < yyyy; p++) {
+
+			if (p == 2014){
+				for(i = 9; i < 13; i++) {
+					yyyymm += p;
+					if(i<10) {
+						yyyymm +='0'+i + ';';
+					}
+					else{
+						yyyymm +=i + ';';
+					}
+				}
+			}
+			else{
+				if (p == (yyyy-1)){
+					for(i = 1; i < mm; i++) {
+						yyyymm += p;
+						if(i<10) {
+							yyyymm +='0'+i + ';';
+						}
+						else{
+							yyyymm +=i + ';';
+						}
+					}
+				}
+				else{
+					for(i = 1; i < 13; i++) {
+						yyyymm += p;
+						if(i<10) {
+							yyyymm +='0'+i + ';';
+						}
+						else{
+							yyyymm +=i + ';';
+						}
+					}
+				}
+			}
+		}
+		sColSummary = 'Sep 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear();
+		qPEcol = 'for Sep 2013 to ' + ReturnPreviousMonthName() + ' ' + (yyyy-2);
+	}
+
+	sReturn += '<table class="listTable gridTable"><thead><tr>';
+
+	sReturn += '<th class=oucolheader>' + 'Province' + '</th>';
+	sReturn += '<th class=oucolheader>' + 'District' + '</th>';
+	sReturn += '<th class=oucolheader>' + 'Sub-District' + '</th>';
+
+	sReturn += '<th class=mycolheader>' + 'MConnect Registrations<br>' + sColSummary + '</th>';
+	sReturn += '<th class=mycolheader>' + 'Antenatal<br>1st Visits<br>' + qPEcol + '</th>';
+	sReturn += '<th class=mycolheader>' + 'Target for <br>' + sColSummary + '</th>';
+	sReturn += '<th class=mycolheader>' + 'Achievement<br>against target %' + '</th>';
+
+	sReturn += '</tr></thead>';
+	sReturn += '<tbody>';
+
+	varMyURL = '../api/analytics.json?dimension=dx:URtTfFDY2Iu;lPVvmrINVHS;EMHm9Q75Og1;AWXQsENsfoV&dimension=ou:LEVEL-2;LEVEL-3;LEVEL-4&filter=pe:' + yyyymm + '&hierarchyMeta=false&displayProperty=SHORTNAME';
+	console.log(varMyURL);
+	thisJSON = $.ajax({url:varMyURL, async: false}).responseText; 
+
+	for(i = 0; i < myData.rows.length; i++) {
+
+		/* insert total for ou3 [row] */
+		if (OU3LastParent != myData.rows[i][9])
+		{
+			if (OU3LastParentName != '')
+			{
+				sReturn += '<tr>';
+				sReturn += '<td class=data>&nbsp;</td>';
+				sReturn += '<td colspan=2 class=subtotalyellow><strong>Subtotal ' + OU3LastParentName + '</strong></td>';
+				OU3Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU3LastParent);
+				
+				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col1Tot)) + '</td>';
+				OU3Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU3LastParent);
+				
+				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col2Tot)) + '</td>';
+				OU3Col3Tot = ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',OU3LastParent);
+				
+				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col3Tot)) + '</td>';
+				OU3Col4Tot = ReturnLookupValue(JSON.parse(thisJSON),'URtTfFDY2Iu',OU3LastParent);
+				
+				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(parseFloat(OU3Col4Tot).toFixed(1)) + '</td>';
+				sReturn += '</tr>';
+			}
+		}
+
+		/* insert total for ou2 [row] */
+		if (OU2LastParent != myData.rows[i][5])
+		{
+			if (OU2LastParentName != '')
+			{
+				sReturn += '<tr>';
+				sReturn += '<td colspan=3 class=subtotal><strong>Subtotal ' + OU2LastParentName + '</strong></td>';
+				OU2Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU2LastParent);
+				Col1GrandTot = (Col1GrandTot + parseFloat(OU2Col1Tot));
+				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col1Tot)) + '</td>';
+				OU2Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU2LastParent);
+				Col2GrandTot = (Col2GrandTot + parseFloat(OU2Col2Tot));
+				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col2Tot)) + '</td>';
+				OU2Col3Tot = ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',OU2LastParent);
+				Col3GrandTot = (Col3GrandTot + parseFloat(OU2Col3Tot));
+				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col3Tot)) + '</td>';
+				OU2Col4Tot = ReturnLookupValue(JSON.parse(thisJSON),'URtTfFDY2Iu',OU2LastParent);
+				Col4GrandTot = (Col4GrandTot + parseFloat(OU2Col4Tot));
+				sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(OU2Col4Tot).toFixed(1)) + '</td>';
+				sReturn += '</tr>';
+			}
+		}
+
+		sReturn += '<tr>';
+		if (OU2LastParentName != myData.rows[i][7])
+		{
+			sReturn += '<td class=data nowrap><strong>' + myData.rows[i][7] + '<strong></td>';
+			OU2LastParent = myData.rows[i][5];
+			OU2LastParentName = myData.rows[i][7];
+		}
+		else
+		{
+			sReturn += '<td class=data>&nbsp;</td>';
+		}
+		if (OU3LastParentName != myData.rows[i][11])
+		{
+			sReturn += '<td class=data nowrap><strong>' + myData.rows[i][11] + '<strong></td>';
+			OU3LastParent = myData.rows[i][9];
+			OU3LastParentName = myData.rows[i][11];
+		}
+		else
+		{
+			sReturn += '<td class=data>&nbsp;</td>';
+		}
+
+		col1 = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',myData.rows[i][13])));
+		if (col1 == ''){
+			col1 = 0;
+		}
+
+		col2 = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',myData.rows[i][13])));
+		if (col2 == ''){
+			col2 = 0;
+		}
+
+		col3 = ((ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',myData.rows[i][13])))
+		if (col3 == ''){
+			col3 = 0;
+		}
+
+		dblPerc = ReturnLookupValue(JSON.parse(thisJSON),'URtTfFDY2Iu',myData.rows[i][13]);
+		col4 = dblPerc;
+		if (col4 == ''){
+			col4 = 0;
+		}
+	
+		if ((col1 + col2) == 0){
+			sStyleColor = "color:#808080;background-Color:#F5F5F5;";
+		}
+		else{
+			sStyleColor = "";
+		}
+
+		if (col1 == 0)
+		{
+			col1 = '';
+		}
+
+		if (col2 == 0)
+		{
+			col2 = '';
+		}
+
+		if (col3 == 0)
+		{
+			col3 = '';
+		}
+
+		if (col4 == 0)
+		{
+			col4 = '';
+		}
+		sReturn += '<td class=data style="' + sStyleColor + '">' + myData.rows[i][15] + '</td>';
+		sReturn += '<td class=numericdata style="' + sStyleColor + '">' + col1 + '</td>';
+		sReturn += '<td class=numericdata style="' + sStyleColor + '">' + col2 + '</td>';
+		
+		var tgWhole = ((col3 != '') ? formatNumber(parseFloat(col3).toFixed(0)) : '');
+		
+		sReturn += '<td class=numericdata style="' + sStyleColor + '">' + tgWhole + '</td>';
+
+		if (dblPerc != ''){
+			if (dblPerc != 0){
+				sReturn += '<td class=numericdata>' + formatNumber(parseFloat(dblPerc).toFixed(1)) + '&nbsp;</td>';
+			}
+			else{
+				sReturn += '<td class=numericdata style="' + sStyleColor + '">&nbsp;</td>';
+			}
+		}
+		else{
+			sReturn += '<td class=numericdata style="' + sStyleColor + '">&nbsp;</td>';
+		}
+
+		sReturn += '</tr>';
+	}
+
+
+	/* insert total for ou4 [row] */
+	sReturn += '<tr>';
+	sReturn += '<td class=data>&nbsp;</td>';
+	sReturn += '<td colspan=2 class=subtotalyellow><strong>Subtotal ' + OU3LastParentName + '</strong></td>';
+	OU3Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU3LastParent);
+	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col1Tot)) + '</td>';
+	OU3Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU3LastParent);
+	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col2Tot)) + '</td>';
+	OU3Col3Tot = ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',OU3LastParent);
+	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col3Tot)) + '</td>';
+	OU3Col4Tot = ReturnLookupValue(JSON.parse(thisJSON),'URtTfFDY2Iu',OU3LastParent);
+	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(parseFloat(OU3Col4Tot).toFixed(1)) + '</td>';
+	sReturn += '</tr>';
+
+
+	/* insert total for ou3 [row] */
+	sReturn += '<tr>';
+	sReturn += '<td colspan=3 class=subtotal><strong>Subtotal ' + OU2LastParentName + '</strong></td>';
+	OU2Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU2LastParent);
+	Col1GrandTot = (Col1GrandTot + parseFloat(OU2Col1Tot));
+	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col1Tot)) + '</td>';
+	OU2Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU2LastParent);
+	Col2GrandTot = (Col2GrandTot + parseFloat(OU2Col2Tot));
+	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col2Tot)) + '</td>';
+	OU2Col3Tot = ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',OU2LastParent);
+	Col3GrandTot = (Col3GrandTot + parseFloat(OU2Col3Tot));
+	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col3Tot)) + '</td>';
+	OU2Col4Tot = ReturnLookupValue(JSON.parse(thisJSON),'URtTfFDY2Iu',OU2LastParent);
+	//Col4GrandTot = (Col4GrandTot + parseFloat(OU2Col4Tot));
+	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(OU2Col4Tot).toFixed(1)) + '</td>';
+	sReturn += '</tr>';
+
+	col1 = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS','HxdpS7eL5hZ');
+	if (col1 == ''){
+		col1 = 0;
+	}
+
+
+	sReturn += '<tr>';
+	sReturn += '<td colspan=3 class=data>Total registrations not possible to allocate to clinic</td>';
+	sReturn += '<td class=numericdata>' + formatNumber(Math.round(col1)) + '</td>';
+	sReturn += '<td class=data>&nbsp;</td>';
+	sReturn += '<td class=data>&nbsp;</td>';
+	sReturn += '<td class=data>&nbsp;</td>';
+	sReturn += '</tr>';
+	
+	Col1GrandTot = parseFloat(Col1GrandTot) + parseFloat(col1);
+	
+	sReturn += '<tr>';
+	sReturn += '<td colspan=3 class=subtotal><strong>Total Registrations</strong></td>';
+	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(Col1GrandTot)) + '</td>';
+	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(Col2GrandTot).toFixed(0)) + '</td>';
+	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(Col3GrandTot).toFixed(0)) + '</td>';
+	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(Col1GrandTot/Col3GrandTot*100).toFixed(1)) + '</td>';
+	sReturn += '</tr>';
+
+	sReturn += '</tbody></table>';
+
+	document.all("loadingmessage").innerHTML = '';
+	document.all("ReportResults").style.display = 'block';
+
+	$(sDestination).html(sReturn);
+}
+
+function LoadHTMLresultsTable(myData,sDestination){
+
+	var i;
+	var p;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var iNum = 0;
+	var iDen = 0;
+	var sLastOU;
+
+	sReturn += '<table class="listTable gridTable"><thead><tr>';
+
+	for(i = 0; i < myData.headers.length; i++) {
+		sReturn += '<th>' + myData.headers[i].name + '</th>';
+	}
+
+	sReturn += '</tr></tr></thead>';
+	sReturn += '<tbody>';
+
+	for(i = 0; i < myData.rows.length; i++) {
+		sReturn += '<tr>';
+		for(p = 0; p < myData.headers.length; p++) {
+			sReturn += '<td>' + myData.rows[i][p] + '</td>';
+		}
+		sReturn += '</tr>';
+	}
+
+	sReturn += '</tbody></table>';
+
+	$(sDestination).html(sReturn);
+}
+
+function formatNumber(num)
+{
+    return ("" + num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, function($1) { return $1 + " " });
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function ReturnLookupValue(theData,dx,ou){
+
+	var i;
+	var sReturn = '';
+
+	for(i = 0; i < theData.rows.length; i++) {
+	
+		if (theData.rows[i][0] == dx)
+		{
+			if (theData.rows[i][1] == ou)
+			{
+				sReturn = theData.rows[i][2];
+			}
+		}
+
+	}
+
+	return sReturn;
+}
+
+function ReturnPreviousMonthName(){
+	var d = new Date();
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+	  "July", "August", "September", "October", "November", "December"];
+	return monthNames[d.getMonth()-1];
+}
+function ReturnPreviousMonthYear(){
+	var y = new Date();
+	if (y.getMonth() == 12){
+		return y.getFullYear()-1;
+	}
+	else{
+		return y.getFullYear();
+	}
+}
+
+function ReturnMonthAbbr(iMonth){
+	var d = new Date();
+	var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	return monthShortNames[iMonth];
+}
+</script>
+
+<div id='loadingmessage' name='loadingmessage' style=''>
+<span id='loading' name='loading' style='width:98%;height:98%;text-align:center;'>
+<div style='color:#999999;font-family:arial;font-weight:700;font-size:11pt;width:25%;border:1px solid #F5F5F5;padding:4px;vertical-align:middle;' class='rounded'><Img Src='../images/ajax-loader-circle.gif'>&nbsp;&nbsp;PREPARING REPORT DATA</div>
+</span>
+</div>
+
+<table style='width:900px;height:100%;display:none;' id='ReportResults' name='ReportResults'>
+
+ <tr>
+  <td style='width:75px;' rowspan=500>&nbsp;</td>
+  <td id='logoArea' name='logoArea' style='text-align:center;font-size:12pt;font-weight:700;vertical-align:middle;border:1px solid #E6E6E6;padding:5px;width:100%;' class='rounded'>
+	<img src='http://www.jembi.org/wp-content/uploads/2014/08/Logo.png' style='height:55px;position:relative:left:-10px;top:-5px;'><br>
+	<span id='TITLE_DATE_RANGE' name='TITLE_DATE_RANGE' style='position:relative:left:-10px;top:-25px;'></span>
+  </td>
+ </tr>
+
+ <tr>
+  <td id='' name='' class='datablockTitle' style='font-size:8pt;text-align:left;' colspan=2>
+ 
+	<table style='width:100%;background-Color:#F5F5F5;border:1px solid #E6E6E6' class='rounded'>
+
+<script language='javascript'>
+
+	var yyyymm = ''
+	var yy;
+
+	document.write ('<tr>');
+	document.write ('<td colspan=2><a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '" style="color:#0066FF;">Show All</a></td>');
+	document.write ('<td colspan=10>&nbsp;</td>');
+	document.write ('</tr>');
+
+	for(p = 2014; p < yyyy; p++) {
+		document.write ('<tr><td>');
+
+		yy = p.toString();
+		yy = yy.substr(2,2);
+
+		if (p == 2014){
+			document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + p + '&pename=Aug-14 to Dec-14&pecol=Aug-13 to Dec-13" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+			for(i = 0; i < 12; i++) {
+				yyyymm = p;
+				if(i<9) {
+					yyyymm +='0'+(i+1);
+				}
+				else{
+					yyyymm = yyyymm.toString() + (i+1);
+				}
+				if (i<7){
+					document.write ('<td>');
+					document.write ('<span style="color:#C0C0C0;">' + ReturnMonthAbbr(i) + '-' + yy + '</span></td>');
+					document.write ('</td>');
+				}
+				else{
+					document.write ('<td>');
+					document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+					document.write ('</td>');
+				}
+			}
+			document.write ('</tr>');
+		}
+		else{
+			if (p == (yyyy-1)){
+				document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + p + '&pename=Jan-' + yy + ' to ' + ReturnMonthAbbr(mm-1) + '-' + yy + '*&pecol=Jan-' + (yy-1) + ' to ' + ReturnMonthAbbr(mm-1) + '-' + (yy-1) + '" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+				for(i = 0; i < 12; i++) {
+					yyyymm = p;
+					if(i<9) {
+						yyyymm +='0'+(i+1);
+					}
+					else{
+						yyyymm = yyyymm.toString() + (i+1);
+					}
+					if (i>=mm){
+						document.write ('<td>');
+						document.write ('<span style="color:#C0C0C0;">' + ReturnMonthAbbr(i) + '-' + yy + '</span></td>');
+						document.write ('</td>');
+					}
+					else{
+						if (i == (mm-1)){
+							document.write ('<td>');
+							document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '*&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#66A3FF;">' + ReturnMonthAbbr(i) + '-' + yy + '*</a></td>');
+							document.write ('</td>');
+						}
+						else{
+							document.write ('<td>');
+							document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+							document.write ('</td>');
+						}
+					}
+				}
+			}
+			else{
+				document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + p + '&pename=Jan-' + yy + ' to Dec-' + yy + '&pecol=Jan-' + (yy-1) + ' to Dec-' + (yy-1) + '" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+				for(i = 0; i < 12; i++) {
+					yyyymm = p;
+					if(i<9) {
+						yyyymm +='0'+(i+1);
+					}
+					else{
+						yyyymm = yyyymm.toString() + (i+1);
+					}
+
+					document.write ('<td>');
+					document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit.id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+					document.write ('</td>');
+
+				}
+			}
+		}
+	}
+
+</script>
+	</table>
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td id='DataBlock1Content' name='DataBlock1Content' style='' colspan=2>
+ 
+  </td>
+ </tr>
+
+
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+ 
+ <tr>
+  <td style='color:#CFCFCF;font-size:8pt;height:10px;' colspan=2>
+	&nbsp;
+  </td>
+ </tr>
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+
+
+</table>

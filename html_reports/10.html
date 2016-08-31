@@ -1,0 +1,319 @@
+
+
+        <script type="text/javascript" src="http://nicolas.kruchten.com/pivottable/examples/ext/d3.v3.min.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+		<link rel="stylesheet" type="text/css" href="http://nhird.health.gov.za/DHIS14_NIDS13/aspcode/css/pivot.css">
+		<script type="text/javascript" src="http://nhird.health.gov.za/DHIS14_NIDS13/aspcode/css/pivot.js"></script>
+		
+        <script type="text/javascript" src="http://nicolas.kruchten.com/pivottable/examples/ext/jquery.csv-0.71.min.js"></script>
+        <!-- <script type="text/javascript" src="http://nicolas.kruchten.com/pivottable/dist/pivot.js"></script> -->
+        <script type="text/javascript" src="http://nicolas.kruchten.com/pivottable/dist/gchart_renderers.js"></script>
+        <script type="text/javascript" src="http://nicolas.kruchten.com/pivottable/dist/d3_renderers.js"></script>
+        <style>
+            * {font-family: Arial;font-size:8pt;}
+        </style>
+
+<script type="text/javascript">
+
+var orgUnit = dhis2.report.organisationUnit;
+var orgUnitHierarchy = dhis2.report.organisationUnitHierarchy;
+var orgUnitChildren = dhis2.report.organisationUnitChildren;
+var period = dhis2.report.periods;
+
+var varJSON;
+var OUlevelLookup = '../api/organisationUnitLevels.json?fields=id,name,level&paging=false';
+
+OUlevelJ = $.ajax({url:OUlevelLookup, async: false}).responseText; 
+
+var objLevels = JSON.parse(OUlevelJ);
+var OUlevelArr = GetOUlevelNames(objLevels);
+
+google.load("visualization", "1", {packages:["corechart", "charteditor"]});
+
+$(document).ready(
+
+	function() {
+
+		//var derivers = $.pivotUtilities.derivers;
+
+		$(function(){
+		
+			//document.getElementById("header").style.display = 'none';
+
+
+			var derivers = $.pivotUtilities.derivers;
+			var dateFormat = $.pivotUtilities.derivers.dateFormat;
+			var sortAs = $.pivotUtilities.sortAs;
+			var renderers = $.extend($.pivotUtilities.renderers, 
+				$.pivotUtilities.gchart_renderers);
+            var renderers = $.pivotUtilities.renderers;
+            var gchart_renderers = $.pivotUtilities.gchart_renderers
+			var MyJSON = ReturnMyJSON();
+
+			$("#output").pivotUI(JSON.parse(MyJSON), {
+					rendererName: "Table",
+                    derivedAttributes: {
+                        "year":       dateFormat("Period", "%y", true),
+                        "month":      dateFormat("Period", "%m", true),
+                        "month name": dateFormat("Period", "%n", true)
+                    },
+                    sorters: function(attr) {
+                        if(attr == "month name") {
+                            return sortAs(["Jan","Feb","Mar","Apr", "May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]);
+                        }
+                    },
+					renderers: $.extend(renderers, gchart_renderers),
+					rows: OUlevelArr,
+					cols: ["year", "month name","Data"],
+					aggregatorName: "Average",
+					vals: ["value"]
+			});
+		 });
+}); //document ready function
+
+
+function ReturnMyJSON(){
+
+	var i;
+	var p;
+	var x;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var iNum = 0;
+	var iDen = 0;
+	var sLastOU;
+	var sParentPath;
+	var ParentArr;
+	var OUlevelJ;
+	var Num;
+	var sTemp;
+
+	//var sJdata = '../api/analytics.json?dimension=pe:' + getParameterByName('pe') + '&dimension=dx:A9s6E9l4W8z;Bt5H0q5L3h7;eo2N8j1S9k4;Dv1K3w4Z3u0;cl2E3i6X5z9&dimension=ou:LEVEL-' + (orgUnitHierarchy.length + 1) + ';' + orgUnit.id + '&hierarchyMeta=true&displayProperty=NAME&showHierarchy=true';
+	//var sJdata = '../api/analytics.json?dimension=pe:201501;201502;201503&dimension=dx:A9s6E9l4W8z;Bt5H0q5L3h7;eo2N8j1S9k4;Dv1K3w4Z3u0;cl2E3i6X5z9&dimension=ou:LEVEL-' + (orgUnitHierarchy.length + 2) + ';' + orgUnit.id + '&hierarchyMeta=true&displayProperty=NAME&showHierarchy=true';
+	var sJdata = '../api/analytics/events/query/CsKMsVrpRny.json?stage=seLCrA60bLP&dimension=pe:LAST_12_MONTHS&dimension=ou:JLA7wl59oN3&dimension=pCG3mE6Rd4D&dimension=LGO7BKcpUcB&dimension=RQtHZcQHvEC:LIKE%3Acomplaint&dimension=u8qaP9AqGL5&displayProperty=NAME';
+
+	//console.log(sJdata);
+	varJSON = $.ajax({url:sJdata, async: false}).responseText; 
+
+	var myData = JSON.parse(varJSON);
+	var objNames = JSON.parse(JSON.stringify(myData.metaData.names)); 
+	var objParents = JSON.parse(JSON.stringify(myData.metaData.ouHierarchy));
+
+	sReturn += '[ ';
+
+	for(i = 0; i < myData.rows.length; i++) {
+
+		sReturn += '{';
+
+		for(p = 0; p < myData.headers.length; p++) {
+
+			if (myData.headers[p].name == 'ou')
+			{
+
+				sParentPath = ReturnLookup(objParents,myData.rows[i][p]);
+				ParentArr = sParentPath.split("/");
+
+				for (x=1; x<ParentArr.length; x++)
+				{
+					sReturn += '"' + GetOUlevelName(objLevels,x) + '" : "' + ReturnLookup(objNames,ParentArr[x]) + '", ';
+				}
+				sReturn += '"' + GetOUlevelName(objLevels,x) + '" : "' + ReturnLookup(objNames,myData.rows[i][p]) + '", ';
+			}
+			else{
+
+				if (myData.headers[p].name == 'value'){
+					Num = myData.rows[i][p];
+					if (Num != ''){
+						NewNum = parseFloat(Num);
+					}
+					else{
+						NewNum = Num;
+					}
+					sReturn += '"' + myData.headers[p].name + '" : ' + NewNum + '';
+				}
+				else{
+					if (myData.headers[p].name == 'pe'){
+						sTemp = myData.rows[i][p];
+						//sReturn += '"' + ReturnLookup(objNames,myData.headers[p].name) + '" : "' + myData.rows[i][p] + '"';
+						// FORMAT Date value with complete YYYY-MM-DD values (injecting date separator "-" as well as default day value "01")
+						sReturn += '"' + ReturnLookup(objNames,myData.headers[p].name) + '" : "' + sTemp.substring(0, 4) + '-' + sTemp.substring(4, 6) + '-01"';
+					}
+					else{
+						if (myData.headers[p].name == 'dx'){
+							sNewName = ReturnLookup(objNames,myData.rows[i][p]);
+							sNewName = sNewName.replace("Percentage of","%");
+							sNewName = sNewName.replace("Client electing","");
+							sReturn += '"' + ReturnLookup(objNames,myData.headers[p].name) + '" : "' + sNewName + '"';
+						}
+						else{
+							sReturn += '"' + ReturnLookup(objNames,myData.headers[p].name) + '" : "' + ReturnLookup(objNames,myData.rows[i][p]) + '"';
+						}
+					}
+				}
+
+				if (p != myData.headers.length-1){
+					sReturn += ', ';
+				}
+			}
+		}
+
+		sReturn += '}';
+
+		if (i != myData.rows.length-1){
+			sReturn += ', ';
+		}
+	}
+
+	sReturn += ']';
+
+	return sReturn;
+
+}
+
+
+function getParameterByName(name) {0
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function LoadHTMLresultsTable(myData,sDestination){
+
+	var i;
+	var p;
+	var x;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var iNum = 0;
+	var iDen = 0;
+	var sLastOU;
+	var sParentPath;
+	var ParentArr;
+	var OUlevelJ;
+
+	var objNames = JSON.parse(JSON.stringify(myData.metaData.names));
+	var objParents = JSON.parse(JSON.stringify(myData.metaData.ouNameHierarchy));
+	var OUlevelLookup = '../api/organisationUnitLevels.json?fields=id,name,level&paging=false';
+
+	OUlevelJ = $.ajax({url:OUlevelLookup, async: false}).responseText; 
+
+	var objLevels = JSON.parse(OUlevelJ);
+
+	sReturn += '[ ';
+
+	for(i = 0; i < myData.rows.length; i++) {
+
+		sReturn += '{';
+
+		for(p = 0; p < myData.headers.length; p++) {
+
+			if (myData.headers[p].name == 'ou')
+			{
+
+				sParentPath = ReturnLookup(objParents,ReturnLookup(objNames,myData.rows[i][p]));
+				ParentArr = sParentPath.split("/");
+
+				for (x=1; x<ParentArr.length; x++)
+				{
+					sReturn += '"' + GetOUlevelName(objLevels,x) + '" : "' + ParentArr[x] + '",';
+				}
+
+			}
+			else{
+			
+				if (myData.headers[p].name == 'value'){
+					sReturn += '"' + myData.headers[p].name + '" : "' + myData.rows[i][p] + '"';
+				}
+				else{
+					sReturn += '"' + ReturnLookup(objNames,myData.headers[p].name) + '" : "' + ReturnLookup(objNames,myData.rows[i][p]) + '"';
+				}
+
+				if (p != myData.headers.length-1){
+					sReturn += ',';
+				}
+			}
+		}
+
+		sReturn += '}';
+
+		if (i != myData.rows.length-1){
+			sReturn += ',';
+		}
+	}
+
+	sReturn += ']';
+	
+	console.log(sReturn);
+	$(sDestination).html(sReturn);
+}
+
+function ReturnLookup(theData,Val){
+
+	var sReturn = '';
+
+	sReturn = theData[Val];
+
+	if (sReturn != ''){
+		if (sReturn != undefined){
+			var sReturnNew = sReturn.toString(); //.replace("\"," ");		
+		}
+		else{
+			var sReturnNew = Val;
+		}
+		return sReturnNew;
+	}
+	else{
+		return Val;
+	}
+}
+
+function GetOUlevelName(OUlevelJ,iOU){
+
+	var i;
+	var sReturn = '';
+
+	for(i = 0; i < OUlevelJ.organisationUnitLevels.length; i++) {
+
+		if (OUlevelJ.organisationUnitLevels[i].level == iOU){
+
+			sReturn = OUlevelJ.organisationUnitLevels[i].name;
+		}
+	}
+
+	if (sReturn == ''){
+		return iOU;
+	}
+	else{
+		return sReturn;
+	}
+
+}
+
+function GetOUlevelNames(OUlevelJ){
+
+	var i;
+	var sReturn = '';
+	var OUarr = new Array();
+
+	for(i = 1; i < OUlevelJ.organisationUnitLevels.length; i++) {
+
+		OUarr.push(GetOUlevelName(objLevels,i+1));
+
+	}
+
+	return OUarr;
+
+}
+
+</script>
+<!--
+	<input type=text id='MyAPIlink' name='MyAPIlink' style='position:absolute;left:10;top:10;width:200px;'>
+	<input type=button id='MyAPIlinkExecute' name='MyAPIlinkExecute' style='position:absolute;left:220;top:10;' value='refresh'>
+-->
+
+  <div id="output" style="margin: 30px;"></div>
+ 

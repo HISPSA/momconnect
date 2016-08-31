@@ -1,0 +1,848 @@
+<style type="text/css">
+
+	td
+	  {
+		  padding:4px;
+		  font-size:10.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Arial;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	a, span
+	 {
+		  padding:4px;
+		  font-size:9.0pt;
+		  font-weight:400;
+		  font-style:normal;
+		  text-decoration:none;
+		  font-family:Tahoma,Verdana,Arial;
+		  font-size: 8pt;
+		  text-align:general;
+		  vertical-align:middle;
+		  border:none;
+	}
+	th.oucolheader
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:9pt;
+		border:1px solid #000000;
+		vertical-align:bottom;
+		text-align:left;
+	}
+	.colheader
+	{
+		font-weight:700;
+		color:#101010;
+		border:1px solid #CFCFCF;
+		padding:4px;
+	}
+	th.mycolheader
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:9pt;
+		border:1px solid #000000;
+		text-align:center;
+	}
+	th.mycolheadersmall
+	{
+		font-weight:700;
+		color:#000000;
+		font-size:8pt;
+		border:2px solid #000000;
+		text-align:center;
+	}
+	td.subtotal
+	{
+		background-Color: #D4D4D4;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:left;
+	}
+	td.subtotalyellow
+	{
+		background-Color: #F4FF5C;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:left;
+	}
+	td.numericsubtotal
+	{
+		background-Color: #D4D4D4;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.numericsubtotalyellow
+	{
+		background-Color: #F4FF5C;
+		font-weight: 700;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.data
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+	}
+	td.numericdata
+	{
+		font-weight:400;
+		color:#101010;
+		border:1px solid #000000;
+		padding:5px;
+		text-align:right;
+	}
+	td.numericdatabold
+	{
+		font-weight:700;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+
+	td.numericdataperc
+	{
+		font-weight:400;
+		font-size:8pt;
+		font-style: italic;
+		color:#101010;
+		border:1px solid #000000;
+		padding:5px;
+		text-align:right;
+	}
+	td.numericdatapercbold
+	{
+		font-weight:700;
+		font-size:8pt;
+		font-style: italic;
+		color:#101010;
+		border:1px solid #000000;
+		padding:2px;
+		text-align:right;
+	}
+	td.border
+	{
+		border:1px solid #000000;
+		padding:2px;
+	}
+	.center
+	{
+		text-align:center;
+	}
+	.datablockTitle
+	{
+		font-size:16pt;
+		font-weight:700;
+		color:#121212;
+		padding:4px;
+	}
+	.datablockDescription
+	{
+		font-size:9pt;
+		font-weight:400;
+		color:#121212;
+		padding:8px;
+	}
+	.ReferenceCaption
+	{
+		font-weight:700;
+		color:#101010;
+		font-size:10pt;
+		text-align:left;
+		padding:10px;
+	}
+	.rounded
+	{
+		border-top-left-radius: 4px 4px;
+		border-bottom-left-radius: 4px 4px;
+		border-top-right-radius: 4px 4px;
+		border-bottom-right-radius: 4px 4px;
+	}
+</style>
+
+
+<script type="text/javascript">
+
+var orgUnit = dhis2.report.organisationUnit;
+var orgUnitHierarchy = dhis2.report.organisationUnitHierarchy;
+var orgUnitChildren = dhis2.report.organisationUnitChildren;
+var period = dhis2.report.periods;
+var repuid = getParameterByName('uid');
+
+var varJSON;
+var outVals = '';
+var outCumul = '';
+var outCumulOrg = '';
+var CumulOrgCount = 0;
+var outJSON;
+var qPe = getParameterByName('pe');
+var qPEname = getParameterByName('pename');
+var qPEcolName = getParameterByName('pecol');
+var qAllNoSR = getParameterByName('show');
+
+var today = new Date();
+
+var dd = today.getDate()-1;
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear()+1;
+
+var orgUnit_id = 'JLA7wl59oN3';
+
+$(document).ready(
+
+	function() {
+	
+	var DtmNow;
+	
+	DtmNow = new Date().getTime();
+
+	CreateOrgHierarchyAndResults('#DataBlock1Content');
+
+	if (qPEname != ''){
+		$( "#TITLE_DATE_RANGE" ).html('<strong style="font-size:14pt;">MomConnect Converted Registrations ' + qPEname + '</strong>');
+	}
+	else{
+		$( "#TITLE_DATE_RANGE" ).html('<strong style="font-size:14pt;">MomConnect Converted Registrations September 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear() + '</strong>');
+	}
+
+}); //document ready function
+
+function CreateOrgHierarchyAndResults(sDestination){
+
+	var i;
+	var p;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var OU2LastParent = '';
+	var OU2LastParentName = '';
+	var OU3LastParent = '';
+	var OU3LastParentName = '';
+
+	var CHWtot;
+	var CHWconv;
+	var CHWu1tot;
+	var CHWu2tot;
+	var CHWu3tot;
+	var CHWo3tot;
+
+	var allCHWsub;
+	var allPUBsub;
+	var allSUB;
+	var SUBtot;
+	var SUBconv;
+	var SUBu1tot;
+	var SUBu2tot;
+	var SUBu3tot;
+	var SUBo3tot;
+
+	var GRTconv;
+	var GRTu1tot;
+	var GRTu2tot;
+	var GRTu3tot;
+	var GRTo3tot;
+
+	var varSR;
+	var varRegVis;
+	var iRegT;
+	var iSRtot;
+	
+	var iVU;
+	var iNS;
+	var iS;
+	var iVS;
+	var yyyymm = ''
+	var qPE;
+	var qPEcol;
+	var sColSummary;
+	
+	qPE = getParameterByName('pe');
+	
+	//console.log('pe=' + qPE);
+
+	if (qPE != ''){
+		yyyymm = qPE;
+		sColSummary = ' ' + qPEname;
+		qPEcol = ' ' + qPEcolName;
+	}
+	else{
+		for(p = 2014; p < yyyy; p++) {
+
+			if (p == 2014){
+				for(i = 9; i < 13; i++) {
+					yyyymm += p;
+					if(i<10) {
+						yyyymm +='0'+i + ';';
+					}
+					else{
+						yyyymm +=i + ';';
+					}
+				}
+			}
+			else{
+				if (p == (yyyy-1)){
+					for(i = 1; i < mm; i++) {
+						yyyymm += p;
+						if(i<10) {
+							yyyymm +='0'+i + ';';
+						}
+						else{
+							yyyymm +=i + ';';
+						}
+					}
+				}
+				else{
+					for(i = 1; i < 13; i++) {
+						yyyymm += p;
+						if(i<10) {
+							yyyymm +='0'+i + ';';
+						}
+						else{
+							yyyymm +=i + ';';
+						}
+					}
+				}
+			}
+		}
+
+		sColSummary = 'Sep 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear();
+		qPEcol = 'for Sep 2013 to ' + ReturnPreviousMonthName() + ' ' + (yyyy-2);
+	}
+
+
+	sReturn += '<table class="" style="width:75%;border-spacing:0;"><tbody>';
+
+	varSR = '../api/analytics.json?dimension=dx:lPVvmrINVHS;DHP3S3oR8Ob;hll1AMnqnro;DHP3S3oR8Ob;dwqkOMJkDhC;kVuIug0bDcZ;TkNTN1Di74F;elDuId82Ech;fGwLFzuAQcS;orDTdGUMTR4;b1zV5iZXXlo;vqwlped2JGq;F5Q88S4biV3;ML6rEaBympC&dimension=ou:LEVEL-1;' + orgUnit_id + '&dimension=co&filter=pe:' + yyyymm + '&hierarchyMeta=true&displayProperty=NAME&showHierarchy=true';
+
+	var SrJSON = $.ajax({url:varSR, async: false}).responseText; 
+
+	{
+
+		iRegT = ReturnLookup(JSON.parse(SrJSON),'lPVvmrINVHS',orgUnit_id);
+		iRegT = parseFloat(iRegT.replace('',0));
+
+		allPUBsub = ReturnLookup(JSON.parse(SrJSON),'DHP3S3oR8Ob',orgUnit_id);
+		allCHWsub = ReturnLookup(JSON.parse(SrJSON),'hll1AMnqnro',orgUnit_id);
+		allSUB = parseFloat((parseFloat(allPUBsub.replace('',0)) + parseFloat(allCHWsub.replace('',0))));
+		//CHWtot = ReturnLookup(JSON.parse(SrJSON),'hll1AMnqnro',orgUnit_id);
+		CHWu1tot = ReturnLookup(JSON.parse(SrJSON),'kVuIug0bDcZ',orgUnit_id);
+		CHWu2tot = ReturnLookup(JSON.parse(SrJSON),'TkNTN1Di74F',orgUnit_id);
+		CHWu3tot = ReturnLookup(JSON.parse(SrJSON),'elDuId82Ech',orgUnit_id);
+		CHWo3tot = ReturnLookup(JSON.parse(SrJSON),'dwqkOMJkDhC',orgUnit_id);
+		CHWconv = parseFloat((parseFloat(CHWu1tot.replace('',0)) + parseFloat(CHWu2tot.replace('',0)) + parseFloat(CHWu3tot.replace('',0)) + parseFloat(CHWo3tot.replace('',0))));
+
+		SUBtot = ReturnLookup(JSON.parse(SrJSON),'DHP3S3oR8Ob',orgUnit_id);
+		SUBu1tot = ReturnLookup(JSON.parse(SrJSON),'orDTdGUMTR4',orgUnit_id);
+		SUBu2tot = ReturnLookup(JSON.parse(SrJSON),'b1zV5iZXXlo',orgUnit_id);
+		SUBu3tot = ReturnLookup(JSON.parse(SrJSON),'vqwlped2JGq',orgUnit_id);
+		SUBo3tot = ReturnLookup(JSON.parse(SrJSON),'fGwLFzuAQcS',orgUnit_id);
+		SUBconv = parseFloat((parseFloat(SUBu1tot.replace('',0)) + parseFloat(SUBu2tot.replace('',0)) + parseFloat(SUBu3tot.replace('',0)) + parseFloat(SUBo3tot.replace('',0))));
+
+		GRTconv = parseFloat(CHWconv + SUBconv);
+		GRTu1tot = parseFloat((parseFloat(CHWu1tot.replace('',0)) + parseFloat(SUBu1tot.replace('',0))));
+		GRTu2tot = parseFloat((parseFloat(CHWu2tot.replace('',0)) + parseFloat(SUBu2tot.replace('',0))));
+		GRTu3tot = parseFloat((parseFloat(CHWu3tot.replace('',0)) + parseFloat(SUBu3tot.replace('',0))));
+		GRTo3tot = parseFloat((parseFloat(CHWo3tot.replace('',0)) + parseFloat(SUBo3tot.replace('',0))));
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader style="text-align:left;padding:4px;border-top:2px solid #000000;" colspan=2>' + 'Total Registrations</th>';
+		sReturn += '<td nowrap class=numericdata style="border-top:2px solid #000000;' + (Math.round(iRegT) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(iRegT)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader style="text-align:left;padding:4px;border-top:1px solid #000000;" colspan=2>' + 'Public Subscriptions</th>';
+		sReturn += '<td nowrap class=numericdata style="border-top:1px solid #000000;' + (Math.round(allPUBsub) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(allPUBsub)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader style="text-align:left;padding:4px;border-top:1px solid #000000;" colspan=2>' + 'CHW Identification</th>';
+		sReturn += '<td nowrap class=numericdata style="border-top:1px solid #000000;' + (Math.round(allCHWsub) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(allCHWsub)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader style="text-align:left;padding:4px;" colspan=2>' + 'Total Subscriptions</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(allSUB) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(allSUB)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader style="text-align:left;padding:4px;" colspan=2>' + 'All converted subscriptions</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(GRTconv) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(GRTconv)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=2" style="text-align:left;padding:4px;">' + 'Percentage converted</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(allSUB) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(GRTconv)/parseFloat(allSUB)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=2 style="text-align:left;padding:4px;">' + '% Converted from Public</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(SUBconv) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(SUBconv)/parseFloat(GRTconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=2 style="text-align:left;padding:4px;">' + '% Converted from CHW</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(CHWconv) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CHWconv)/parseFloat(GRTconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader rowspan=8>' + 'Subscriptions Converted to Registrations</th>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 1 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(GRTu1tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(GRTu1tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(GRTu1tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(GRTu1tot)/parseFloat(GRTconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 2 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(GRTu2tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(GRTu2tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(GRTu2tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(GRTu2tot)/parseFloat(GRTconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 3 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(GRTu3tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(GRTu3tot)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(GRTu3tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(GRTu3tot)/parseFloat(GRTconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<th class=mycolheader colspan=1>' + '3+ Months</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(GRTo3tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(GRTo3tot)) + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(GRTo3tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(GRTo3tot)/parseFloat(GRTconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader rowspan=8>' + 'Converted from Public Subscriptions</th>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 1 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(SUBu1tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(SUBu1tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(SUBu1tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(SUBu1tot)/parseFloat(SUBconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 2 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(SUBu2tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(SUBu2tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(SUBu2tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(SUBu2tot)/parseFloat(SUBconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 3 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(SUBu3tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(SUBu3tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(SUBu3tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(SUBu3tot)/parseFloat(SUBconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '3+ Months</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(SUBo3tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(SUBo3tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(SUBo3tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(SUBo3tot)/parseFloat(SUBconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + 'Total converted</th>';
+		sReturn += '<th class=mycolheader>&nbsp;</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(SUBconv) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(SUBconv)) + '</td>';
+		sReturn += '</tr>';
+
+
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader rowspan=8>' + 'Converted from CHW Subscriptions</th>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 1 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(CHWu1tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(CHWu1tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(CHWu1tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CHWu1tot)/parseFloat(CHWconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 2 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(CHWu2tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(CHWu2tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(CHWu2tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CHWu2tot)/parseFloat(CHWconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '< 3 Month</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(CHWu3tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(CHWu3tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(CHWu3tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CHWu3tot)/parseFloat(CHWconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader colspan=1>' + '3+ Months</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(CHWo3tot) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(CHWo3tot)) + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + '%</th>';
+		sReturn += '<td nowrap class=numericdataperc style="' + (Math.round(CHWo3tot) === 0 ? "color:#ffffff;" : "") +'">' + (parseFloat(CHWo3tot)/parseFloat(CHWconv)*100).toFixed(1).replace('NaN','0.0').replace('.0','') + '</td>';
+		sReturn += '</tr>';
+		
+		sReturn += '<tr>';
+		sReturn += '<th class=mycolheader>' + 'Total converted</th>';
+		sReturn += '<th class=mycolheader>&nbsp;</th>';
+		sReturn += '<td nowrap class=numericdata style="' + (Math.round(CHWconv) === 0 ? "color:#ffffff;" : "") +'">' + formatNumber(Math.round(CHWconv)) + '</td>';
+		sReturn += '</tr>';
+
+	}
+
+	sReturn += '</tbody></table>';
+
+	document.all("loadingmessage").innerHTML = '';
+	document.all("ReportResults").style.display = 'block';
+
+	$(sDestination).html(sReturn);
+}
+
+function LoadHTMLresultsTable(myData,sDestination){
+
+	var i;
+	var p;
+	var sReturn = '';
+	var sBGcol;
+	var sCol;
+	var iNum = 0;
+	var iDen = 0;
+	var sLastOU;
+
+	sReturn += '<table class="listTable gridTable"><thead><tr>';
+
+	for(i = 0; i < myData.headers.length; i++) {
+		sReturn += '<th>' + myData.headers[i].name + '</th>';
+	}
+
+	sReturn += '</tr></tr></thead>';
+	sReturn += '<tbody>';
+
+	for(i = 0; i < myData.rows.length; i++) {
+		sReturn += '<tr>';
+		for(p = 0; p < myData.headers.length; p++) {
+			sReturn += '<td>' + myData.rows[i][p] + '</td>';
+		}
+		sReturn += '</tr>';
+	}
+
+	sReturn += '</tbody></table>';
+
+	$(sDestination).html(sReturn);
+}
+
+function formatNumber(num)
+{
+    return ("" + num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, function($1) { return $1 + " " });
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function LookupName(theData,Val){
+
+	sReturn = theData[Val];
+	return  sReturn;
+}
+
+function ReturnLookup(theData,dx,ou){
+
+	var i;
+	var sReturn = '';
+
+	for(i = 0; i < theData.rows.length; i++) {
+	
+		if (theData.rows[i][0] == dx)
+		{
+			if (theData.rows[i][1] == ou)
+			{
+				sReturn = theData.rows[i][3];
+			}
+		}
+
+	}
+
+	return sReturn;
+}
+function ReturnLookupValue(theData,dx,co,ou){
+
+	var i;
+	var sReturn = '';
+
+	for(i = 0; i < theData.rows.length; i++) {
+	
+		if (theData.rows[i][0] == dx)
+		{
+			if (theData.rows[i][1] == ou)
+			{
+				if (theData.rows[i][2] == co)
+				{
+					sReturn = theData.rows[i][3];
+				}
+			}
+		}
+
+	}
+
+	return sReturn;
+}
+
+function ReturnPreviousMonthName(){
+	var d = new Date();
+	var monthNames = ["January", "February", "March", "April", "May", "June",
+	  "July", "August", "September", "October", "November", "December"];
+	return monthNames[d.getMonth()-1];
+}
+function ReturnPreviousMonthYear(){
+	var y = new Date();
+	if (y.getMonth() == 12){
+		return y.getFullYear()-1;
+	}
+	else{
+		return y.getFullYear();
+	}
+}
+
+function ReturnMonthAbbr(iMonth){
+	var d = new Date();
+	var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	return monthShortNames[iMonth];
+}
+</script>
+
+<div id='loadingmessage' name='loadingmessage' style=''>
+<span id='loading' name='loading' style='width:98%;height:98%;text-align:center;'>
+<div style='color:#999999;font-family:arial;font-weight:700;font-size:11pt;width:25%;border:1px solid #F5F5F5;padding:4px;vertical-align:middle;' class='rounded'><Img Src='../images/ajax-loader-circle.gif'>&nbsp;&nbsp;PREPARING REPORT DATA</div>
+</span>
+</div>
+
+<table style='width:900px;height:100%;display:none;' id='ReportResults' name='ReportResults'>
+
+ <tr>
+  <td style='width:75px;' rowspan=500>&nbsp;</td>
+  <td id='logoArea' name='logoArea' style='text-align:left;font-size:12pt;font-weight:700;vertical-align:middle;border:1px solid #E6E6E6;padding:5px;width:100%;' class='rounded'>
+	<img src='http://www.jembi.org/wp-content/uploads/2014/08/Logo.png' style='height:55px;position:relative:left:-10px;top:-5px;'><br>
+	<span id='TITLE_DATE_RANGE' name='TITLE_DATE_RANGE' style='position:relative:left:-10px;top:-25px;'></span>
+  </td>
+ </tr>
+
+ <tr>
+  <td id='' name='' class='datablockTitle' style='font-size:8pt;text-align:left;' colspan=2>
+ 
+	<table style='width:100%;background-Color:#ffffff;border:1px solid #E6E6E6' class='rounded'>
+
+<script language='javascript'>
+
+/*
+function NavigateMyPage(sURL){
+	var URL;
+	URL = sURL;
+	if (document.getElementById("pagefilter").value == '0'){
+		URL = URL + 'show=0';
+	}
+	else{
+		URL = URL + 'show=1';
+	}
+	window.location = sURL;
+}
+
+	var yyyymm = ''
+	var yy;
+	
+	if (qAllNoSR == ''){
+		qAllNoSR = 0;
+	}
+*/
+
+	document.write ('<tr>');
+	document.write ('<td colspan=2><a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '" style="color:#0066FF;">Show All</a>&nbsp;</td>');
+	document.write ('<td colspan=10>&nbsp;</td>');
+	document.write ('</tr>');
+
+	for(p = 2014; p < yyyy; p++) {
+		document.write ('<tr><td>');
+
+		yy = p.toString();
+		yy = yy.substr(2,2);
+
+		if (p == 2014){
+			document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + p + '&pename=Aug-14 to Dec-14&pecol=Aug-13 to Dec-13" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+			for(i = 0; i < 12; i++) {
+				yyyymm = p;
+				if(i<9) {
+					yyyymm +='0'+(i+1);
+				}
+				else{
+					yyyymm = yyyymm.toString() + (i+1);
+				}
+				if (i<7){
+					document.write ('<td>');
+					document.write ('<span style="color:#C0C0C0;">' + ReturnMonthAbbr(i) + '-' + yy + '</span></td>');
+					document.write ('</td>');
+				}
+				else{
+					document.write ('<td>');
+					document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+					document.write ('</td>');
+				}
+			}
+			document.write ('</tr>');
+		}
+		else{
+			if (p == (yyyy-1)){
+				document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + p + '&pename=Jan-' + yy + ' to ' + ReturnMonthAbbr(mm-1) + '-' + yy + '*&pecol=Jan-' + (yy-1) + ' to ' + ReturnMonthAbbr(mm-1) + '-' + (yy-1) + '" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+				for(i = 0; i < 12; i++) {
+					yyyymm = p;
+					if(i<9) {
+						yyyymm +='0'+(i+1);
+					}
+					else{
+						yyyymm = yyyymm.toString() + (i+1);
+					}
+					if (i>=mm){
+						document.write ('<td>');
+						document.write ('<span style="color:#C0C0C0;">' + ReturnMonthAbbr(i) + '-' + yy + '</span></td>');
+						document.write ('</td>');
+					}
+					else{
+						if (i == (mm-1)){
+							document.write ('<td>');
+							document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '*&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#66A3FF;">' + ReturnMonthAbbr(i) + '-' + yy + '*</a></td>');
+							document.write ('</td>');
+						}
+						else{
+							document.write ('<td>');
+							document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+							document.write ('</td>');
+						}
+					}
+				}
+			}
+			else{
+				document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + p + '&pename=Jan-' + yy + ' to Dec-' + yy + '&pecol=Jan-' + (yy-1) + ' to Dec-' + (yy-1) + '" style="color:#0066FF;">' + p + '</a>&nbsp;&gt;</td>');
+				for(i = 0; i < 12; i++) {
+					yyyymm = p;
+					if(i<9) {
+						yyyymm +='0'+(i+1);
+					}
+					else{
+						yyyymm = yyyymm.toString() + (i+1);
+					}
+
+					document.write ('<td>');
+					document.write ('<a href="generateHtmlReport.action?uid=' + repuid + '&ou=' + orgUnit_id + '&pe=' + yyyymm + '&pename=month ' + ReturnMonthAbbr(i) + '-' + yy + '&pecol=month ' + ReturnMonthAbbr(i) + '-' + (yy-1) + '" style="color:#0066FF;">' + ReturnMonthAbbr(i) + '-' + yy + '</a></td>');
+					document.write ('</td>');
+
+				}
+			}
+		}
+
+	}
+	
+	function ShowHideZeroConversions(thisObj){
+	
+		var TRs = document.body.getElementsByTagName("tr");
+		for (var i=0, max=TRs.length; i < max; i++) {
+			if (TRs[i].getAttribute("oulevel") == "5"){
+				if (TRs[i].getAttribute("registrations") == "0"){
+					if (thisObj.getAttribute("clicked") == "false"){
+						TRs[i].style.display = "none";
+					}
+					else{
+						TRs[i].style.display="table-row";
+					}
+				}
+			}
+		}
+
+		if (thisObj.getAttribute("clicked") == "false"){
+			thisObj.setAttribute("clicked","true");
+		}
+		else{
+			thisObj.setAttribute("clicked","false");
+		}
+
+	}
+
+</script>
+	</table>
+
+
+  </td>
+ </tr>
+
+
+ <tr>
+	<td colspan=2 style="font-size:8pt;">
+	<!--	<input type=button value="Show/Hide ZERO Registrations" onclick="javascript:ShowHideZeroConversions(this);" clicked="false" style="color:#0066FF;" class="button">&nbsp;	-->
+	</td>
+	<td colspan=10>&nbsp;</td>
+ </tr>
+
+
+ <tr>
+  <td id='DataBlock1Content' name='DataBlock1Content' style='' colspan=2>
+ 
+  </td>
+ </tr>
+
+
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+ 
+ <tr>
+  <td style='color:#CFCFCF;font-size:8pt;height:10px;' colspan=2>
+	&nbsp;
+  </td>
+ </tr>
+ <!-- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # -->
+
+
+</table>
