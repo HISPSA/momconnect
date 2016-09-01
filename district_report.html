@@ -1,0 +1,54 @@
+<link rel="stylesheet" type="text/css" href="../dhis-web-commons/javascripts/ext/resources/css/ext-plugin-gray.css" />
+
+<script type="text/javascript" src="../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+<script type="text/javascript" src="../dhis-web-commons/javascripts/ext/ext-all.js"></script>
+<script type="text/javascript" src="../dhis-web-commons/javascripts/plugin/chart.js"></script>
+<script type="text/javascript" src="../dhis-web-commons/javascripts/plugin/table.js"></script>
+<script type="text/javascript" src="../dhis-web-commons/javascripts/plugin/eventchart.js"></script>
+<script type="text/javascript" src="../dhis-web-commons/javascripts/plugin/eventreport.js"></script>
+
+<script type="text/javascript">
+		
+var orgUnit = dhis2.report.organisationUnit;
+var orgUnitHierarchy = dhis2.report.organisationUnitHierarchy;
+var orgUnitChildren = dhis2.report.organisationUnitChildren;
+var period = dhis2.report.periods[0];
+var base = '../';
+
+	//Charting 
+	Ext.onReady(function() {
+		DHIS.getChart({ url: base, el: 'regTargets', id: 'HMyes1Gm2mL' });
+
+		DHIS.getChart({ url: base, el: 'regTargetsBySubDistrict', id: 'sPQCF0xaG9Y' });
+
+		DHIS.getTable({url: base, el: 'regANCByFacility', id: 'SJYdt4eYhr8' });
+
+		DHIS.getEventChart({ url: base, el: "aggCompliments6months", id: "fmE5H5DsAdr" });
+
+		DHIS.getEventChart({ url: base, el: "aggComplaints6months", id: "aXpksUEtSQ7" });
+
+		DHIS.getEventReport({ url: base, el: "complaintByFacility", id: "anYh4JCz081" });
+
+	});
+	
+		
+</script>
+
+<h3>Registrations vs Targets by Month</h3>
+<div id="regTargets" style="width:800px; height:400px"></div>
+<br>
+<h3>% Registrations vs Targets by SubDistrict</h3>
+<div id="regTargetsBySubDistrict" style="width:800px; height:400px"></div>
+<br>
+<h3>% Registrations vs 1st ANC visits by Facility</h3>
+<div id="regANCByFacility"></div>
+<br>
+<h3>Aggregate Compliments - Last 6 Months</h3>
+<div id="aggCompliments6months" style="width:700px; height:400px"></div>
+<br>
+<h3>Aggregate Complaints - Last 6 Months</h3>
+<div id="aggComplaints6months" style="width:700px; height:400px"></div>
+<br>
+<h3>Complaints by Facility - Last 6 Months</h3>
+<div id="complaintByFacility"></div>
+<br>
