@@ -17,18 +17,88 @@ var base = '../';
 
 	//Charting 
 	Ext.onReady(function() {
-		DHIS.getChart({ url: base, el: 'regTargets', id: 'HMyes1Gm2mL' });
+		//DHIS.getChart({ url: base, el: 'regTargets', id: 'HMyes1Gm2mL' });
+		
+		DHIS.getChart({
+			url : base,
+			el : 'regTargets',
+			type : 'bar',
+			columns : [ {dimension : 'de',items : [ {id : 'lPVvmrINVHS'	}, {id : 'AWXQsENsfoV'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : LAST_12_MONTHS} ]} ],
+			filters : [{dimension : 'ou',items : [id : USER_ORGUNIT_CHILDREN]	} ],
+			showData : true,
+		}); 
 
-		DHIS.getChart({ url: base, el: 'regTargetsBySubDistrict', id: 'sPQCF0xaG9Y' });
+		//DHIS.getChart({ url: base, el: 'regTargetsBySubDistrict', id: 'sPQCF0xaG9Y' });
+		
+		DHIS.getChart({
+			url : base,
+			el : 'regTargetsBySubDistrict',
+			type : 'bar',
+			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : LAST_MONTH} ]} ],
+			filters : [{dimension : 'ou',items : [id : USER_ORGUNIT_CHILDREN]	} ],
+			showData : true,
+		}); 
 
-		DHIS.getTable({url: base, el: 'regANCByFacility', id: 'SJYdt4eYhr8' });
+		//DHIS.getTable({url: base, el: 'regANCByFacility', id: 'SJYdt4eYhr8' });
+		
+		DHIS.getTable({
+			url : base,
+			el : 'regANCByFacility',
+			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : LAST_MONTH} ]} ],
+			filters : [{dimension : 'ou',items : [id : USER_ORGUNIT_CHILDREN]	} ],
+			showData : true,
+		}); 
 
-		DHIS.getEventChart({ url: base, el: "aggCompliments6months", id: "fmE5H5DsAdr" });
+		//DHIS.getEventChart({ url: base, el: "aggCompliments6months", id: "fmE5H5DsAdr" });
+		
+		DHIS.getEventChart({
+			url : base,
+			el : 'aggCompliments6months',
+			type : 'bar',
+			program : 'CsKMsVrpRny',
+			programStage : 'seLCrA60bLP',	
+			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : LAST_6_MONTHS} ]} ],
+			filters : [{dimension : 'dy',items : [id : 'RQtHZcQHvEC:EQ:compliment']	} ],
+			outputType: EVENT,
+			//aggregationType
+			showData : true,
+		}); 
 
-		DHIS.getEventChart({ url: base, el: "aggComplaints6months", id: "aXpksUEtSQ7" });
+		//DHIS.getEventChart({ url: base, el: "aggComplaints6months", id: "aXpksUEtSQ7" });
 
-		DHIS.getEventReport({ url: base, el: "complaintByFacility", id: "anYh4JCz081" });
-
+		DHIS.getEventChart({
+			url : base,
+			el : 'aggComplaints6months',
+			type : 'bar',
+			program : 'CsKMsVrpRny',
+			programStage : 'seLCrA60bLP',	
+			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : LAST_6_MONTHS} ]} ],
+			filters : [{dimension : 'dy',items : [id : 'RQtHZcQHvEC:EQ:complaint']	} ],
+			outputType: EVENT,
+			//aggregationType
+			showData : true,
+		}); 
+		
+		//DHIS.getEventReport({ url: base, el: "complaintByFacility", id: "anYh4JCz081" });
+		
+		DHIS.getEventChart({
+			url : base,
+			el : 'aggComplaints6months',
+			type : 'bar',
+			program : 'CsKMsVrpRny',
+			programStage : 'seLCrA60bLP',	
+			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : LAST_6_MONTHS} ]} ],
+			filters : [{dimension : 'dy',items : [id : 'RQtHZcQHvEC:EQ:complaint']	} ],
+			outputType: EVENT,
+			//aggregationType
+			showData : true,
+		}); 
 	});
 	
 		
