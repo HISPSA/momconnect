@@ -22,10 +22,10 @@ var base = '../';
 		DHIS.getChart({
 			url : base,
 			el : 'regTargets',
-			type : 'bar',
+			type : 'column',
 			columns : [ {dimension : 'de',items : [ {id : 'lPVvmrINVHS'	}, {id : 'AWXQsENsfoV'	}  ]	} ],
-			rows :  [ {dimension : 'pe',items : [ {id : LAST_12_MONTHS} ]} ],
-			filters : [{dimension : 'ou',items : [id : USER_ORGUNIT_CHILDREN]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : 'LAST_12_MONTHS' } ]} ],
+			filters : [{dimension : 'ou',items : [{id : 'USER_ORGUNIT_CHILDREN' }]	} ],
 			showData : true,
 		}); 
 
@@ -34,10 +34,10 @@ var base = '../';
 		DHIS.getChart({
 			url : base,
 			el : 'regTargetsBySubDistrict',
-			type : 'bar',
+			type : 'column',
 			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
-			rows :  [ {dimension : 'pe',items : [ {id : LAST_MONTH} ]} ],
-			filters : [{dimension : 'ou',items : [id : USER_ORGUNIT_CHILDREN]	} ],
+			rows : [{dimension : 'ou',items : [{id : 'USER_ORGUNIT_CHILDREN' }]	} ],
+			filters :  [ {dimension : 'pe',items : [ {id : 'LAST_MONTH' } ]} ],
 			showData : true,
 		}); 
 
@@ -46,9 +46,9 @@ var base = '../';
 		DHIS.getTable({
 			url : base,
 			el : 'regANCByFacility',
-			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
-			rows :  [ {dimension : 'pe',items : [ {id : LAST_MONTH} ]} ],
-			filters : [{dimension : 'ou',items : [id : USER_ORGUNIT_CHILDREN]	} ],
+			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'}, {id : 'lPVvmrINVHS'}, {id : 'AWXQsENsfoV'	}  ]	} ],
+			rows : [{dimension : 'ou',items : [{id : 'USER_ORGUNIT_CHILDREN' }]	} ],
+			filters :  [ {dimension : 'pe',items : [ {id : 'LAST_MONTH' } ]} ],
 			showData : true,
 		}); 
 
@@ -57,13 +57,13 @@ var base = '../';
 		DHIS.getEventChart({
 			url : base,
 			el : 'aggCompliments6months',
-			type : 'bar',
+			type : 'column',
 			program : 'CsKMsVrpRny',
 			programStage : 'seLCrA60bLP',	
-			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
-			rows :  [ {dimension : 'pe',items : [ {id : LAST_6_MONTHS} ]} ],
-			filters : [{dimension : 'dy',items : [id : 'RQtHZcQHvEC:EQ:compliment']	} ],
-			outputType: EVENT,
+			columns : [ {dimension : 'ou',items : [ {id : 'USER_ORGUNIT'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : 'LAST_6_MONTHS' } ]} ],
+			filters : [{dimension : 'dy',items : [{id : 'RQtHZcQHvEC:EQ:compliment'}]	} ],
+			outputType: 'EVENT',
 			//aggregationType
 			showData : true,
 		}); 
@@ -73,29 +73,28 @@ var base = '../';
 		DHIS.getEventChart({
 			url : base,
 			el : 'aggComplaints6months',
-			type : 'bar',
+			type : 'column',
 			program : 'CsKMsVrpRny',
 			programStage : 'seLCrA60bLP',	
-			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
-			rows :  [ {dimension : 'pe',items : [ {id : LAST_6_MONTHS} ]} ],
-			filters : [{dimension : 'dy',items : [id : 'RQtHZcQHvEC:EQ:complaint']	} ],
-			outputType: EVENT,
+			columns : [ {dimension : 'ou',items : [ {id : 'USER_ORGUNIT'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : 'LAST_6_MONTHS' } ]} ],
+			filters : [{dimension : 'dy',items : [{id : 'RQtHZcQHvEC:EQ:complaint'}]	} ],
+			outputType: 'EVENT',
 			//aggregationType
 			showData : true,
 		}); 
 		
 		//DHIS.getEventReport({ url: base, el: "complaintByFacility", id: "anYh4JCz081" });
 		
-		DHIS.getEventChart({
+		DHIS.getEventReport({
 			url : base,
 			el : 'aggComplaints6months',
-			type : 'bar',
 			program : 'CsKMsVrpRny',
 			programStage : 'seLCrA60bLP',	
-			columns : [ {dimension : 'in',items : [ {id : 'URtTfFDY2Iu'	}  ]	} ],
-			rows :  [ {dimension : 'pe',items : [ {id : LAST_6_MONTHS} ]} ],
-			filters : [{dimension : 'dy',items : [id : 'RQtHZcQHvEC:EQ:complaint']	} ],
-			outputType: EVENT,
+			columns : [ {dimension : 'ou',items : [ {id : 'USER_ORGUNIT'	}  ]	} ],
+			rows :  [ {dimension : 'pe',items : [ {id : 'LAST_6_MONTHS' } ]} ],
+			filters : [{dimension : 'dy',items : [ {id : 'pCG3mE6Rd4D'}, {id : 'RQtHZcQHvEC:EQ:complaint'}]	} ],
+			outputType: 'EVENT',
 			//aggregationType
 			showData : true,
 		}); 
