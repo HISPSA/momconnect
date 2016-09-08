@@ -175,6 +175,9 @@ $(document).ready(
 			}
 		} );
 
+	var myjsonB = $.ajax({url:"../api/sqlViews/QWB7J3sesuB/data.json", async: false}).responseText; 
+	LoadMaxEventDate (JSON.parse(myjsonB),1);
+
 	document.all("loadingmessage").innerHTML = '';
 	document.all("ReportResults").style.display = 'block';
 
@@ -375,7 +378,7 @@ function formatNumber(num)
 
  <tr>
   <td id='ReportTitle' name='ReportTitle' style='font-size:20pt;font-weight:700;color:#121212;text-align:center;' colspan=3>
-	NurseConnect Cumulative Overview <!-- <br>Data Up until <strong><span id='MAX_TRACKER_ENTRY1' name='MAX_TRACKER_ENTRY1'>Midnight Last Night</span></strong>-->
+	NurseConnect Cumulative Overview <br>Data Up until midnight of <strong><span id='MAX_TRACKER_ENTRY1' name='MAX_TRACKER_ENTRY1'></span></strong>
   </td>
  </tr>
 

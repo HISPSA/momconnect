@@ -204,9 +204,17 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 	var col2;
 	var col3;
 	var col4;
+	
+	var ProvNCreg;
+	var FacNCreg;
 	var sStyleColor;
 
 	var OU2Col1Tot;
+	var OU1ProvNCreg = 0;
+	var OU1FacNCreg = 0;
+	var OU2FacNCreg = 0;
+	var OU3FacNCreg = 0;
+	var OU4FacNCreg = 0;
 	var OU2Col2Tot;
 	var OU2Col3Tot;
 	var OU2Col4Tot;
@@ -279,19 +287,26 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 
 	sReturn += '<table class="listTable gridTable"><thead><tr>';
 
-	sReturn += '<th class=oucolheader>' + 'Province' + '</th>';
-	sReturn += '<th class=oucolheader>' + 'District' + '</th>';
-	sReturn += '<th class=oucolheader>' + 'Sub-District' + '</th>';
+	sReturn += '<th class=oucolheader rowspan=2>' + 'Province' + '</th>';
+	sReturn += '<th class=oucolheader rowspan=2>' + 'District' + '</th>';
+	sReturn += '<th class=oucolheader rowspan=2>' + 'Sub-District' + '</th>';
 
-	sReturn += '<th class=mycolheader>' + 'MConnect Registrations<br>' + sColSummary + '</th>';
-	sReturn += '<th class=mycolheader>' + 'Antenatal<br>1st Visits<br>' + qPEcol + '</th>';
-	sReturn += '<th class=mycolheader>' + 'Target for <br>' + sColSummary + '</th>';
-	sReturn += '<th class=mycolheader>' + 'Achievement<br>against target %' + '</th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'MConnect Registrations<br>' + sColSummary + '</th>';
+	sReturn += '<th class=mycolheader colspan=2>' + 'NConnect Registrations<br>' + sColSummary + '</th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'Antenatal<br>1st Visits<br>' + qPEcol + '</th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'Target for <br>' + sColSummary + '</th>';
+	sReturn += '<th class=mycolheader rowspan=2>' + 'Achievement<br>against target %' + '</th>';
 
+	sReturn += '</tr>';
+	
+	sReturn += '<tr>';
+	sReturn += '<th class=mycolheader>' + 'PROVINCIAL' + '</th>';
+	sReturn += '<th class=mycolheader>' + 'FACILITY' + '</th>';
+	
 	sReturn += '</tr></thead>';
 	sReturn += '<tbody>';
 
-	varMyURL = '../api/analytics.json?dimension=dx:URtTfFDY2Iu;lPVvmrINVHS;EMHm9Q75Og1;AWXQsENsfoV&dimension=ou:LEVEL-2;LEVEL-3;LEVEL-4&filter=pe:' + yyyymm + '&hierarchyMeta=false&displayProperty=SHORTNAME';
+	varMyURL = '../api/analytics.json?dimension=dx:URtTfFDY2Iu;lPVvmrINVHS;EMHm9Q75Og1;AWXQsENsfoV;FQQpzvBZ6qu;K7q7Mpa0oz0&dimension=ou:LEVEL-2;LEVEL-3;LEVEL-4&filter=pe:' + yyyymm + '&hierarchyMeta=false&displayProperty=SHORTNAME';
 	console.log(varMyURL);
 	thisJSON = $.ajax({url:varMyURL, async: false}).responseText; 
 
@@ -302,13 +317,24 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 		{
 			if (OU3LastParentName != '')
 			{
-				sReturn += '<tr>';
+				//OU3FacNCreg = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'K7q7Mpa0oz0',myData.rows[i][9])));
+				if ((OU3FacNCreg == '') || (OU3FacNCreg == 0)){
+					OU3FacNCreg = '';
+				} else {
+					OU2FacNCreg += parseFloat(OU3FacNCreg);
+					OU1FacNCreg += parseFloat(OU3FacNCreg);
+				}
+
+				sReturn += '<tr ou=3>';
 				sReturn += '<td class=data>&nbsp;</td>';
 				sReturn += '<td colspan=2 class=subtotalyellow><strong>Subtotal ' + OU3LastParentName + '</strong></td>';
 				OU3Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU3LastParent);
-				
+
 				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col1Tot)) + '</td>';
 				OU3Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU3LastParent);
+
+				sReturn += '<td class=numericsubtotalyellow>' + '' + '</td>';
+				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3FacNCreg)) + '</td>';
 				
 				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col2Tot)) + '</td>';
 				OU3Col3Tot = ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',OU3LastParent);
@@ -318,6 +344,11 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 				
 				sReturn += '<td class=numericsubtotalyellow>' + formatNumber(parseFloat(OU3Col4Tot).toFixed(1)) + '</td>';
 				sReturn += '</tr>';
+				
+				//OU2FacNCreg = 0;
+				OU3FacNCreg = 0;
+				OU4FacNCreg = 0;
+
 			}
 		}
 
@@ -326,11 +357,26 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 		{
 			if (OU2LastParentName != '')
 			{
-				sReturn += '<tr>';
+
+				sReturn += '<tr ou=2>';
 				sReturn += '<td colspan=3 class=subtotal><strong>Subtotal ' + OU2LastParentName + '</strong></td>';
 				OU2Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU2LastParent);
 				Col1GrandTot = (Col1GrandTot + parseFloat(OU2Col1Tot));
 				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col1Tot)) + '</td>';
+
+				ProvNCreg = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'FQQpzvBZ6qu',myData.rows[i][5])));
+				if ((ProvNCreg == '') || (ProvNCreg == 0)){
+					ProvNCreg = '';
+				} else {
+					OU1ProvNCreg += parseFloat(ProvNCreg);
+				}
+				//OU2FacNCreg = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'K7q7Mpa0oz0',myData.rows[i][5])));
+				if ((OU2FacNCreg == '') || (OU2FacNCreg == 0)){
+					OU2FacNCreg = '';
+				}
+				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(ProvNCreg)) + '</td>';
+				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2FacNCreg)) + '</td>';
+
 				OU2Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU2LastParent);
 				Col2GrandTot = (Col2GrandTot + parseFloat(OU2Col2Tot));
 				sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col2Tot)) + '</td>';
@@ -341,10 +387,13 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 				Col4GrandTot = (Col4GrandTot + parseFloat(OU2Col4Tot));
 				sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(OU2Col4Tot).toFixed(1)) + '</td>';
 				sReturn += '</tr>';
-			}
+
+				OU2FacNCreg = 0;
+				OU3FacNCreg = 0;
+				OU4FacNCreg = 0;			}
 		}
 
-		sReturn += '<tr>';
+		sReturn += '<tr ou=5>';
 		if (OU2LastParentName != myData.rows[i][7])
 		{
 			sReturn += '<td class=data nowrap><strong>' + myData.rows[i][7] + '<strong></td>';
@@ -369,6 +418,20 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 		col1 = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',myData.rows[i][13])));
 		if (col1 == ''){
 			col1 = 0;
+		}
+
+		//ProvNCreg = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'FQQpzvBZ6qu',myData.rows[i][13])));
+		//if ((ProvNCreg == '') || (ProvNCreg == 0))
+		{
+			ProvNCreg = '';
+		}
+
+		FacNCreg =formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'K7q7Mpa0oz0',myData.rows[i][13])));
+		if ((FacNCreg == '') || (FacNCreg == 0)){
+			FacNCreg = '';
+		} else {
+			OU3FacNCreg += parseFloat(FacNCreg);
+			OU4FacNCreg += parseFloat(FacNCreg);
 		}
 
 		col2 = formatNumber(Math.round(ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',myData.rows[i][13])));
@@ -415,6 +478,10 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 		}
 		sReturn += '<td class=data style="' + sStyleColor + '">' + myData.rows[i][15] + '</td>';
 		sReturn += '<td class=numericdata style="' + sStyleColor + '">' + col1 + '</td>';
+		
+		sReturn += '<td class=numericdata style="' + "" + '">' + ProvNCreg + '</td>';
+		sReturn += '<td class=numericdata style="' + "" + '">' + FacNCreg + '</td>';
+		
 		sReturn += '<td class=numericdata style="' + sStyleColor + '">' + col2 + '</td>';
 		
 		var tgWhole = ((col3 != '') ? formatNumber(parseFloat(col3).toFixed(0)) : '');
@@ -443,6 +510,10 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 	sReturn += '<td colspan=2 class=subtotalyellow><strong>Subtotal ' + OU3LastParentName + '</strong></td>';
 	OU3Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU3LastParent);
 	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col1Tot)) + '</td>';
+
+	sReturn += '<td class=numericsubtotalyellow>' + '' + '</td>';
+	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU4FacNCreg)) + '</td>';
+	
 	OU3Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU3LastParent);
 	sReturn += '<td class=numericsubtotalyellow>' + formatNumber(Math.round(OU3Col2Tot)) + '</td>';
 	OU3Col3Tot = ReturnLookupValue(JSON.parse(thisJSON),'AWXQsENsfoV',OU3LastParent);
@@ -458,6 +529,10 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 	OU2Col1Tot = ReturnLookupValue(JSON.parse(thisJSON),'lPVvmrINVHS',OU2LastParent);
 	Col1GrandTot = (Col1GrandTot + parseFloat(OU2Col1Tot));
 	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col1Tot)) + '</td>';
+	
+	sReturn += '<td class=numericsubtotal>' + '' + '</td>';
+	sReturn += '<td class=numericsubtotal>' + OU3FacNCreg + '</td>';
+
 	OU2Col2Tot = ReturnLookupValue(JSON.parse(thisJSON),'EMHm9Q75Og1',OU2LastParent);
 	Col2GrandTot = (Col2GrandTot + parseFloat(OU2Col2Tot));
 	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU2Col2Tot)) + '</td>';
@@ -481,6 +556,8 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 	sReturn += '<td class=data>&nbsp;</td>';
 	sReturn += '<td class=data>&nbsp;</td>';
 	sReturn += '<td class=data>&nbsp;</td>';
+	sReturn += '<td class=data>&nbsp;</td>';
+	sReturn += '<td class=data>&nbsp;</td>';
 	sReturn += '</tr>';
 	
 	Col1GrandTot = parseFloat(Col1GrandTot) + parseFloat(col1);
@@ -488,6 +565,8 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 	sReturn += '<tr>';
 	sReturn += '<td colspan=3 class=subtotal><strong>Total Registrations</strong></td>';
 	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(Col1GrandTot)) + '</td>';
+	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU1ProvNCreg)) + '</td>';
+	sReturn += '<td class=numericsubtotal>' + formatNumber(Math.round(OU1FacNCreg)) + '</td>';
 	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(Col2GrandTot).toFixed(0)) + '</td>';
 	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(Col3GrandTot).toFixed(0)) + '</td>';
 	sReturn += '<td class=numericsubtotal>' + formatNumber(parseFloat(Col1GrandTot/Col3GrandTot*100).toFixed(1)) + '</td>';
