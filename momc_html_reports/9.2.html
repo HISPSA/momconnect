@@ -335,15 +335,15 @@ function ReturnPreviousMonthName(){
 	var d = new Date();
 	var monthNames = ["January", "February", "March", "April", "May", "June",
 	  "July", "August", "September", "October", "November", "December"];
-	return monthNames[d.getMonth()-1];
+	return monthNames[((d.getMonth()== 0) ? 11 : parseInt(d.getMonth())-1)];
 }
 function ReturnPreviousMonthYear(){
 	var y = new Date();
-	if (y.getMonth() == 12){
-		return y.getFullYear()-1;
+	if (y.getMonth() == 11){
+		return y.getFullYear();
 	}
 	else{
-		return y.getFullYear();
+		return (y.getFullYear()-1);
 	}
 }
 
