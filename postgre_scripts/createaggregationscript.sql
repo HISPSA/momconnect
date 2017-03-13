@@ -399,29 +399,54 @@ WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE 
 
 
 
-/* CREATE Client Registration Target fPrev-Year(of Antenatal 1st visit total) values for 2015+ */
+/* CREATE Client Registration Target fPrev-Year(of Antenatal 1st visit total) values for 2016 */
 INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
 select datavalue.sourceid, 'AWXQsENsfoV', datavalue.periodid, cast(datavalue.value as double precision) * 0.8,'aggregated_from_MomScript',CURRENT_DATE
 FROM  public.datavalue, public.period
-WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'EMHm9Q75Og1');
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND period.startdate <= '2016-12-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'EMHm9Q75Og1');
 
-/* CREATE Client Registration Target ACTUAL (of Antenatal 1st visit total) values for 2015+ */
+/* CREATE Client Registration Target ACTUAL (of Antenatal 1st visit total) values for 2016 */
 INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
 select datavalue.sourceid, 'eDktBD88IUL', datavalue.periodid, cast(datavalue.value as double precision) * 0.8,'aggregated_from_MomScript',CURRENT_DATE
 FROM  public.datavalue, public.period
-WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'Al6K6d7Q5m4');
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND period.startdate <= '2016-12-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'Al6K6d7Q5m4');
 
-/* CREATE Client Registration Target (of Antenatal 1st visit before 20 weeks) values for 2015+ */
+/* CREATE Client Registration Target (of Antenatal 1st visit before 20 weeks) values for 2016 */
 INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
 select datavalue.sourceid, 'rIF2YyXrsER', datavalue.periodid, cast(datavalue.value as double precision) * 0.8,'aggregated_from_MomScript',CURRENT_DATE
 FROM  public.datavalue, public.period
-WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'Cl4D9i5T6j2');
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND period.startdate <= '2016-12-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'Cl4D9i5T6j2');
 
-/* CREATE Client Registration Target (of Antenatal 1st visit 20 weeks or later) values for 2015+ */
+/* CREATE Client Registration Target (of Antenatal 1st visit 20 weeks or later) values for 2016 */
 INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
 select datavalue.sourceid, 'rvVE6HN25Vc', datavalue.periodid, cast(datavalue.value as double precision) * 0.8,'aggregated_from_MomScript',CURRENT_DATE
 FROM  public.datavalue, public.period
-WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'N2m4W6w3N4r');
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2016-01-01' AND period.startdate <= '2016-12-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'N2m4W6w3N4r');
+
+
+/* CREATE Client Registration Target fPrev-Year(of Antenatal 1st visit total) values for 2017+ */
+INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
+select datavalue.sourceid, 'AWXQsENsfoV', datavalue.periodid, cast(datavalue.value as double precision) * 1,'aggregated_from_MomScript',CURRENT_DATE
+FROM  public.datavalue, public.period
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2017-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'EMHm9Q75Og1');
+
+/* CREATE Client Registration Target ACTUAL (of Antenatal 1st visit total) values for 2017+ */
+INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
+select datavalue.sourceid, 'eDktBD88IUL', datavalue.periodid, cast(datavalue.value as double precision) * 1,'aggregated_from_MomScript',CURRENT_DATE
+FROM  public.datavalue, public.period
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2017-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'Al6K6d7Q5m4');
+
+/* CREATE Client Registration Target (of Antenatal 1st visit before 20 weeks) values for 2017+ */
+INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
+select datavalue.sourceid, 'rIF2YyXrsER', datavalue.periodid, cast(datavalue.value as double precision) * 1,'aggregated_from_MomScript',CURRENT_DATE
+FROM  public.datavalue, public.period
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2017-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'Cl4D9i5T6j2');
+
+/* CREATE Client Registration Target (of Antenatal 1st visit 20 weeks or later) values for 2017+ */
+INSERT INTO _momc_tally (organisationunitid,deuid,periodid,value,storedby,created)
+select datavalue.sourceid, 'rvVE6HN25Vc', datavalue.periodid, cast(datavalue.value as double precision) * 1,'aggregated_from_MomScript',CURRENT_DATE
+FROM  public.datavalue, public.period
+WHERE period.periodid = datavalue.periodid AND period.startdate >= CURRENT_DATE - 90 AND period.startdate >= '2017-01-01' AND datavalue.dataelementid In (select dataelementid from dataelement where uid = 'N2m4W6w3N4r');
 
 
 
