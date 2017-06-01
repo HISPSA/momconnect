@@ -3,6 +3,16 @@ CREATE OR REPLACE FUNCTION momconnect_aggregate_all_before_today_parmDays(IN day
   RETURNS TABLE(datetime timestamp without time zone, operation character varying, rowcount bigint) AS
 $BODY$
 
+/*
+	Author: 		Greg Rowles (HISP South Africa)
+	File Name:		createaggregationscript.sql
+	Date Created:	2014/08
+	Date Modified:	2017/06/01
+	
+	Comment:		Header summary added to this script to ensure at minimum an audit trail. Historic changes of this file can be found on github
+					at this address: https://github.com/HISPSA/momconnect/tree/master/postgre_scripts
+*/
+
 truncate table _momc_log;
 truncate table _momc_tally;
 
