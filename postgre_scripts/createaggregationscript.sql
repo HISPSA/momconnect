@@ -1865,7 +1865,7 @@ WHERE
   "PI".programinstanceid = "HELP".programinstanceid AND
   "TED".programstageinstanceid = "HELP".programstageinstanceid AND
   "HELP".programstageid = 7872265 AND 
-  "TED".dataelementid = 7872267 AND "TED".value::varchar like 'compliment' AND 
+  "TED".dataelementid = 7872267 AND LOWER("TED".value::varchar) like 'complimen%' AND 
   "HELP".executiondate >= CURRENT_DATE - days AND "HELP".executiondate < CURRENT_DATE
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
@@ -1887,7 +1887,7 @@ WHERE
   "PI".programinstanceid = "HELP".programinstanceid AND
   "TED".programstageinstanceid = "HELP".programstageinstanceid AND
   "HELP".programstageid = 7872265 AND 
-  "TED".dataelementid = 7872267 AND "TED".value::varchar like 'complaint' AND 
+  "TED".dataelementid = 7872267 AND LOWER("TED".value::varchar) like 'complain%' AND 
   "HELP".executiondate >= CURRENT_DATE - days AND "HELP".executiondate < CURRENT_DATE
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
