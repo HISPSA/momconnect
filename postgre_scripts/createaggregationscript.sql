@@ -12,7 +12,7 @@ $BODY$
 	Comment:		Header summary added to this script to ensure at minimum an audit trail. Historic changes of this file can be found on github
 					at this address: https://github.com/HISPSA/momconnect/tree/master/postgre_scripts;
 	Edit History:	Modified search criteria for Complaints + Compliments (keywords had changed, lowercase testing also added);
-					Modified + optimized search criteria for Opt-Outs (particularly CHW subscriptions to ignore registrations, so that only CHW 'subscribers' are counted in CHW opt-outs)
+					Modified + optimized search criteria for Opt-Outs (particularly CHW subscriptions to ignore registrations, so that only CHW 'subscribers' are counted in CHW opt-outs), also included defaults for field datavalues.[deleted]
 */
 
 truncate table _momc_log;
@@ -69,8 +69,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'CHW Identif
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Public Subscriptions (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 7253242;
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Clinic Registration (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 7253258;
 insert into _momc_log (datetime, operation, rowcount) select now(), 'CHW Identified Subscriptions (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 7253250;
@@ -273,8 +273,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'CHW Convert
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Public Converted Reg (updates) AFTER 3 Months', Count(*) from  _momc_tally where found <> 0 AND deuid = 'dwqkOMJkDhC';
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'CHW Converted Reg (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'F5Q88S4biV3';
@@ -373,8 +373,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'Gestational
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Gestational Age 35 weeks and above (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'q7pKketdbUw';
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Gestational Age below 20 weeks (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'C5Ih4771Lp4';
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Gestational Age 20 to 34 weeks (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'MYGXCThSFL5';
@@ -475,8 +475,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit 20 weeks or later TARGET (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'rvVE6HN25Vc';
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total TARGET{fYear} (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'AWXQsENsfoV';
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Antenatal 1st visit total TARGET (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'eDktBD88IUL';
@@ -619,8 +619,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'Client Regi
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Client Registrations with Age 35 years and older (updates)', Count(*) from  _momc_tally where found <> 0 AND deuid = 'cI3CB9ZuReX';
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Client Registrations with Age below 18 years (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'NLCni2oKVGQ';
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Client Registrations with Age between 18 and 19 years (new)', Count(*) from  _momc_tally where found = 0 AND deuid = 'YgL5Iwbi8y2';
@@ -1041,8 +1041,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'SR Waiting 
 
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, categoryoptioncomboid, categoryoptioncomboid, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, categoryoptioncomboid, categoryoptioncomboid, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'SR Cleanliness: very unsatis (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 47847 AND categoryoptioncomboid = 47843;
 insert into _momc_log (datetime, operation, rowcount) select now(), 'SR Cleanliness: unsatis (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 47847 AND categoryoptioncomboid = 47840;
@@ -1819,8 +1819,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'Subscriber 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Subscriber Opt-Out: Unknown (updates)', Count(*) from  _momc_tally where found <> 0 AND uid1 = 'k37vhwhHjUX';
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Opt-Out: Total (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 7625870;
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Opt-Out: Miscarriage (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 7625955;
@@ -1916,8 +1916,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'Helpdesk: C
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Helpdesk: COMPLAINTS (updates)', Count(*) from  _momc_tally where found <> 0 AND uid1 = 'VGy28K3ts9N';
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Helpdesk: COMPLIMENTS (new)', Count(*) from  _momc_tally where found = 0 AND uid1 = 'iL600oV2Aom';
 insert into _momc_log (datetime, operation, rowcount) select now(), 'Helpdesk: COMPLAINTS (new)', Count(*) from  _momc_tally where found = 0 AND uid1 = 'VGy28K3ts9N';
@@ -2075,8 +2075,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnec
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations FAC (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9972527;
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations ALL (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9508715;
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect Registrations NAT (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9972511;
@@ -2119,8 +2119,8 @@ UPDATE datavalue "A" SET value = "B".value FROM _momc_tally "B" WHERE "A".datael
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOuts (updates)', Count(*) from  _momc_tally where found <> 0 AND dataelementid = 9508734;
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOuts (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9508734;
 
@@ -2330,8 +2330,8 @@ insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnec
 
 
 /* Append New data values */
-INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup)
-SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
+INSERT INTO datavalue (dataelementid, periodid, sourceid, categoryoptioncomboid, attributeoptioncomboid, value, storedby, created, lastupdated, followup,deleted)
+SELECT "A".dataelementid, "A".periodid, "A".organisationunitid, 16, 16, "A".value, "A".storedby, "A".created, "A".lastupdated, FALSE,FALSE FROM _momc_tally "A" WHERE "A".found <> 1;
 
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Baby Loss (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 9972511;
 insert into _momc_log (datetime, operation, rowcount) select now(), 'NurseConnect OptOut - Job Change (new)', Count(*) from  _momc_tally where found = 0 AND dataelementid = 10018273;
