@@ -7,10 +7,12 @@ $BODY$
 	Author: 		Greg Rowles (HISP South Africa)
 	File Name:		createaggregationscript.sql
 	Date Created:	2014/08
-	Date Modified:	2017/06/01
+	Date Modified:	2017/06/01, 2017/06/19
 	
 	Comment:		Header summary added to this script to ensure at minimum an audit trail. Historic changes of this file can be found on github
-					at this address: https://github.com/HISPSA/momconnect/tree/master/postgre_scripts
+					at this address: https://github.com/HISPSA/momconnect/tree/master/postgre_scripts;
+	Edit History:	Modified search criteria for Complaints + Compliments (keywords had changed, lowercase testing also added);
+					Modified + optimized search criteria for Opt-Outs (particularly CHW subscriptions to ignore registrations, so that only CHW 'subscribers' are counted in CHW opt-outs)
 */
 
 truncate table _momc_log;
@@ -1079,17 +1081,24 @@ SELECT "A".organisationunitid, 7625870, 'hpqmFs8Bioo', to_char(dtmEvent, 'yyyymm
   SELECT 
 	  "PSI".programstageinstanceid, 
 	  "PSI".organisationunitid, 
-	  "PSI".executiondate as dtmEvent
+	  "PSI".executiondate as dtmEvent, 
+	  "TEAV".value as "Mom_Sub_Cell_Number", 
+	  "DVAL".value as "Opt_Out_Code"
 	FROM 
+	  public.trackedentitydatavalue "DVAL", 
 	  public.programstageinstance "PSI", 
-	  public.programinstance "PI"
+	  public.dataelement, 
+	  public.trackedentityattributevalue "TEAV", 
+	  public.programinstance "PI", 
+	  public.trackedentityattribute
 	WHERE 
+	  "DVAL".dataelementid = dataelement.dataelementid AND
+	  "PSI".programstageinstanceid = "DVAL".programstageinstanceid AND
 	  "PSI".programinstanceid = "PI".programinstanceid AND
-	  "PSI".programstageid = 56636 
-	GROUP BY
-	  "PSI".programstageinstanceid, 
-	  "PSI".organisationunitid, 
-	  "PSI".executiondate
+	  "TEAV".trackedentityinstanceid = "PI".trackedentityinstanceid AND
+	  trackedentityattribute.trackedentityattributeid = "TEAV".trackedentityattributeid AND
+	  "PSI".programstageid = 56636 AND 
+	  "DVAL".dataelementid = 56643 AND "DVAL".value in ('1','2','3','4','5','6')
 ) as "A" 
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY "A".organisationunitid, dtmEvent;
@@ -1284,7 +1293,7 @@ WHERE
   "TED".programstageinstanceid = "OPT".programstageinstanceid AND
   "REG".programstageid = 47888 AND 
   "OPT".programstageid = 56636 AND 
-  "TED".dataelementid = 56643 
+  "TED".dataelementid = 56643  AND "TED".value in ('1','2','3','4','5','6')
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1447,7 +1456,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value in ('1','2','3','4','5','6') AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1471,7 +1480,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '3' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1495,7 +1504,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '1' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1519,7 +1528,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '2' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1543,7 +1552,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '4' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1567,7 +1576,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '5' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1591,7 +1600,7 @@ WHERE
   "CHW".programstageid = 47887 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '6' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1618,7 +1627,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value in ('1','2','3','4','5','6') AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1642,7 +1651,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '3' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1666,7 +1675,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '1' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1690,7 +1699,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '2' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1714,7 +1723,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '4' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1738,7 +1747,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '5' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
@@ -1762,7 +1771,7 @@ WHERE
   "SUB".programstageid = 47886 AND 
   "OPT".programstageid = 56636 AND 
   "TED".dataelementid = 56643 AND "TED".value = '6' AND 
-  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888)
+  "PI".programinstanceid Not In (SELECT programinstanceid FROM programstageinstance WHERE programstageid = 47888 group by programinstanceid )
 ) as foo
 WHERE dtmEvent >= CURRENT_DATE - days AND dtmEvent < CURRENT_DATE
 GROUP BY organisationunitid, dtmEvent;
