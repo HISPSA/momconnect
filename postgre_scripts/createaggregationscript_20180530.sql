@@ -126,7 +126,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 60 AND "REG".executiondate < CURRENT_DATE AND 
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND 
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) < 1
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -143,7 +143,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 90 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) >= 1 AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) < 2  
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -161,7 +161,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 120 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) >= 2 AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) < 3  
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -179,7 +179,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "CHW".programinstanceid AND
   "CHW".programstageid = 47887 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 150 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"CHW".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"CHW".executiondate)) >= 3
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -195,7 +195,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 60 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) < 1
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 
@@ -212,7 +212,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 90 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) >= 1 AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) < 2
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -230,7 +230,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 120 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) >= 2 AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) < 3
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
@@ -248,7 +248,7 @@ WHERE
   "REG".programinstanceid = "momC".programinstanceid AND
   "momC".programinstanceid = "SUB".programinstanceid AND
   "SUB".programstageid = 47886 AND 
-  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - 150 AND "REG".executiondate < CURRENT_DATE AND
+  "REG".programstageid = 47888 AND "REG".executiondate >= CURRENT_DATE - days AND "REG".executiondate < CURRENT_DATE AND
   EXTRACT(year FROM age("REG".executiondate,"SUB".executiondate))*12 + EXTRACT(month FROM age("REG".executiondate,"SUB".executiondate)) >= 3
 GROUP BY "REG".organisationunitid,"REG".organisationunitid, to_char("REG".executiondate, 'yyyymmdd'); 
 

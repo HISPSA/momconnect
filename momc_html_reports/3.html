@@ -290,7 +290,6 @@ function CreateOrgHierarchyAndResults(myData,sDestination){
 	sReturn += '<tbody>';
 
 	varMyURL = '../api/analytics.json?dimension=dx:URtTfFDY2Iu;lPVvmrINVHS;EMHm9Q75Og1;AWXQsENsfoV&dimension=ou:LEVEL-3;LEVEL-4;LEVEL-5;' + orgUnit.id + '&filter=pe:' + yyyymm + '&hierarchyMeta=false&displayProperty=SHORTNAME';
-	console.log(varMyURL);
 	thisJSON = $.ajax({url:varMyURL, async: false}).responseText; 
 
 	for(i = 0; i < myData.rows.length; i++) {

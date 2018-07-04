@@ -282,7 +282,7 @@ function CreateOrgHierarchyAndResults(sDestination){
 		for(p = 2014; p < yyyy; p++) {
 
 			if (p == 2014){
-				for(i = 9; i < 13; i++) {
+				for(i = 8; i < 13; i++) {
 					yyyymm += p;
 					if(i<10) {
 						yyyymm +='0'+i + ';';
@@ -294,7 +294,7 @@ function CreateOrgHierarchyAndResults(sDestination){
 			}
 			else{
 				if (p == (yyyy-1)){
-					for(i = 1; i < mm; i++) {
+					for(i = 1; i <= mm; i++) {
 						yyyymm += p;
 						if(i<10) {
 							yyyymm +='0'+i + ';';
@@ -321,7 +321,6 @@ function CreateOrgHierarchyAndResults(sDestination){
 		sColSummary = 'Sep 2014 to ' + ReturnPreviousMonthName() + ' ' + ReturnPreviousMonthYear();
 		qPEcol = 'for Sep 2013 to ' + ReturnPreviousMonthName() + ' ' + (yyyy-2);
 	}
-
 
 	sReturn += '<table class="" style="width:75%;border-spacing:0;"><tbody>';
 
@@ -602,7 +601,7 @@ function ReturnLookup(theData,dx,ou){
 	
 		if (theData.rows[i][0] == dx)
 		{
-			if (theData.rows[i][1] == ou)
+			if (theData.rows[i][2] == ou)
 			{
 				sReturn = theData.rows[i][3];
 			}
@@ -647,7 +646,7 @@ function ReturnPreviousMonthYear(){
 		return y.getFullYear();
 	}
 	else{
-		return (y.getFullYear()-1);
+		return (y.getFullYear());
 	}
 }
 
